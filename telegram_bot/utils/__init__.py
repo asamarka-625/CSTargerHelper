@@ -1,0 +1,1 @@
+from telegram_bot.utils.work_with_message import edit_message
