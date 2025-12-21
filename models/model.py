@@ -126,12 +126,33 @@ class Card(Base):
         sa.String(1024),
         nullable=False
     )
-
+    card_number: so.Mapped[int] = so.mapped_column(
+        sa.Integer,
+        unique=True,
+        index=True,
+        nullable=False
+    )
+    custom: so.Mapped[bool] = so.mapped_column(
+        sa.Boolean,
+        nullable=False
+    )
+    views: so.Mapped[int] = so.mapped_column(
+        sa.Integer,
+        nullable=False,
+        default=0
+    )
+    
     # Внешние ключи
     category_id: so.Mapped[int] = so.mapped_column(
         sa.Integer,
         sa.ForeignKey('categories.id', ondelete='CASCADE'),
         nullable=False,
+        index=True
+    )
+    user_id: so.Mapped[Optional[int]] = so.mapped_column(
+        sa.Integer,
+        sa.ForeignKey('users.id', ondelete='CASCADE'),
+        nullable=True,
         index=True
     )
 
@@ -146,9 +167,76 @@ class Card(Base):
         cascade="all, delete-orphan",
         order_by="CardImage.order"
     )
+    user: so.Mapped["User"] = so.relationship(
+        "User",
+        back_populates="cards"
+    )
 
     def __repr__(self):
         return f"<Card(id={self.id}, name='{self.name}')>"
 
     def __str__(self):
         return self.name
+        
+
+# Модель для связи cards и users (избранное)
+class UserFavorite(Base):
+    __tablename__ = "user_favorites"
+    
+    user_id: so.Mapped[int] = so.mapped_column(
+        sa.Integer,
+        sa.ForeignKey('users.id', ondelete='CASCADE'),
+        primary_key=True
+    )
+    card_id: so.Mapped[int] = so.mapped_column(
+        sa.Integer,
+        sa.ForeignKey('cards.id', ondelete='CASCADE'),
+        primary_key=True
+    )
+    
+    __table_args__ = (
+        sa.UniqueConstraint('user_id', 'card_id', name='uq_user_favorite'),
+    )
+
+    
+# Модель Пользователя
+class User(Base):
+    __tablename__ = "users"
+
+    id: so.Mapped[int] = so.mapped_column(sa.Integer, primary_key=True)
+    telegram_id: so.Mapped[int] = so.mapped_column(
+        sa.BigInteger,
+        unique=True,
+        index=True,
+        nullable=False
+    )
+    telegram_username: so.Mapped[Optional[str]] = so.mapped_column(
+        sa.String(32),
+        nullable=True
+    )
+    telegram_first_name: so.Mapped[str] = so.mapped_column(
+        sa.String(64),
+        nullable=False
+    )
+    telegram_last_name: so.Mapped[Optional[str]] = so.mapped_column(
+        sa.String(64),
+        nullable=True
+    )
+
+    # Связи
+    cards: so.Mapped[List["Card"]] = so.relationship(
+        "Card",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    favorites: so.Mapped[List["Card"]] = so.relationship(
+        "Card",
+        secondary="user_favorites",
+        backref="favorited_by"
+    )
+
+    def __repr__(self):
+        return f"<User(id={self.id}, telegram_id='{self.telegram_id}', telegram_username='{self.telegram_username}')>"
+
+    def __str__(self):
+        return self.telegram_id

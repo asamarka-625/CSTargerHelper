@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 # Внутренние модули
 from telegram_bot.core import cfg
-from telegram_bot.models import Map
+from models import Map
 from telegram_bot.core import connection
 
 

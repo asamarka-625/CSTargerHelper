@@ -20,6 +20,15 @@ async def create_main_inline(user_id: int):
     return builder.as_markup()
 
 
+# Создаем инлайн кнопки профиля
+async def create_profile_inline(hash_user_data: str):
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="Обновить", callback_data=f"upd_profile:{hash_user_data}"))
+    builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data="back main"))
+    
+    return builder.as_markup()
+    
+
 # Создаем инлайн кнопки (доступные карты)
 async def create_maps_inline(admin: bool = False):
     builder = InlineKeyboardBuilder()

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 # Внутренние модули
 from telegram_bot.core import cfg
-from telegram_bot.models import Category
+from models import Category
 from telegram_bot.core import connection
 
 

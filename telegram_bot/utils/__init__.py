@@ -1,1 +1,2 @@
 from telegram_bot.utils.work_with_message import edit_message
+from telegram_bot.utils.work_with_hash import create_short_hash

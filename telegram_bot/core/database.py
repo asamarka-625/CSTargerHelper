@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 # Внутренние модули
 from telegram_bot.core.config import get_config
-from telegram_bot.models import Base
+from models import Base
 
 
 # Получаем конфиг

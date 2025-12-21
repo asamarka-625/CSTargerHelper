@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 # Внутренние модули
 from telegram_bot.core import cfg
-from telegram_bot.models import Card, CardImage
+from models import Card, CardImage
 from telegram_bot.core import connection
 
 
