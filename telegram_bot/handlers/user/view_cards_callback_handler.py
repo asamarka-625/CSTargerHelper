@@ -35,7 +35,7 @@ async def get_map_callback_run(callback_query: CallbackQuery):
 
 
 # Колбэк выбора карты
-@router.callback_query(F.data.startswitch("map:"))
+@router.callback_query(F.data.startswith("map:"))
 async def choice_map_callback_run(callback_query: CallbackQuery):
     map_id = int(callback_query.data.replace("map:", ""))
 
@@ -61,7 +61,7 @@ async def choice_map_callback_run(callback_query: CallbackQuery):
 
 
 # Колбэк выбора категории
-@router.callback_query(F.data.startswitch("category:"))
+@router.callback_query(F.data.startswith("category:"))
 async def choice_category_callback_run(callback_query: CallbackQuery):
     map_category_id = callback_query.data.replace("category:", "")
     map_id, category_id = map(int, map_category_id.split(":"))
@@ -86,7 +86,7 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
 
 
 # Колбэк выбора карточки
-@router.callback_query(F.data.startswitch("card:"))
+@router.callback_query(F.data.startswith("card:"))
 async def choice_card_callback_run(callback_query: CallbackQuery):
     map_category_card_id = callback_query.data.replace("card:", "")
     map_id, category_id, card_id = map(int, map_category_card_id.split(":"))
@@ -124,7 +124,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
 
 
 # Колбэк навигации по карточке
-@router.callback_query(F.data.startswitch("image:"))
+@router.callback_query(F.data.startswith("image:"))
 async def navigation_card_callback_run(callback_query: CallbackQuery):
     map_category_card_order_id = callback_query.data.replace("image:", "")
     map_id, category_id, card_id, order = map(int, map_category_card_order_id.split(":"))

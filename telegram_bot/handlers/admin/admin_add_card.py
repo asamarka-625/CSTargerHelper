@@ -49,7 +49,7 @@ async def admin_add_card_callback_run(callback_query: CallbackQuery, state: FSMC
 # Колбэк выбора карты для добавления карточки
 @router.callback_query(
     AddCard.state_map,
-    F.data.startswitch("admin_map:"),
+    F.data.startswith("admin_map:"),
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
 async def admin_add_card_choice_map_callback_run(callback_query: CallbackQuery, state: FSMContext):
@@ -78,7 +78,7 @@ async def admin_add_card_choice_map_callback_run(callback_query: CallbackQuery, 
 # Колбэк выбора категории для добавления карточки
 @router.callback_query(
     AddCard.state_category,
-    F.data.startswitch("admin_category:"),
+    F.data.startswith("admin_category:"),
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
 async def admin_add_card_choice_category_callback_run(callback_query: CallbackQuery, state: FSMContext):

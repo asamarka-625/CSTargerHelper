@@ -13,6 +13,9 @@ from models import CardImage
 def create_main_inline(user_id: int):
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="🎮 Карты", callback_data="maps"))
+    builder.row(InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_maps"))
+    builder.row(InlineKeyboardButton(text="❤️ Избранное", callback_data="favorites"))
+    builder.row(InlineKeyboardButton(text="👤 Профиль", callback_data="profile"))
 
     if user_id in cfg.ADMIN_IDS:
         builder.row(InlineKeyboardButton(text="👑 Админ", callback_data="admin"))
@@ -23,7 +26,7 @@ def create_main_inline(user_id: int):
 # Создаем инлайн кнопки профиля
 def create_profile_inline(hash_user_data: str):
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text="Обновить", callback_data=f"upd_profile:{hash_user_data}"))
+    builder.row(InlineKeyboardButton(text="♻️ Обновить", callback_data=f"upd_profile:{hash_user_data}"))
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data="back main"))
     
     return builder.as_markup()
@@ -71,7 +74,6 @@ async def create_maps_inline(admin: bool = False):
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=back))
 
     return text, builder.as_markup()
-
 
 
 # Создаем инлайн кнопки (категории для выбранной карты)
