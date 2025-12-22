@@ -26,7 +26,7 @@ async def get_map_callback_run(callback_query: CallbackQuery):
         text_answer = "Выберите карту"
 
     except:
-        text_answer = "Ошибка выбора карты"
+        text_answer = "Ошибка просмотра карт"
 
     await callback_query.answer(
         text=text_answer,
@@ -47,12 +47,12 @@ async def choice_map_callback_run(callback_query: CallbackQuery):
             message=callback_query.message,
             text=text,
             keyboard=keyboard,
-            media=[f"{cfg.IMAGES_DIR}/maps/{map_image}"]
+            media=f"{cfg.IMAGES_DIR}/maps/{map_image}"
         )
         text_answer = "Выберите категорию"
 
     except:
-        text_answer = "Ошибка выбора категории"
+        text_answer = "Ошибка выбора карты"
 
     await callback_query.answer(
         text=text_answer,
@@ -77,7 +77,7 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
         text_answer = "Выберите карточку"
 
     except:
-        text_answer = "Ошибка выбора карточки"
+        text_answer = "Ошибка выбора категории"
 
     await callback_query.answer(
         text=text_answer,
@@ -115,7 +115,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
         text_answer = f"Карточка {card.name}"
 
     except:
-        text_answer = "Ошибка отображения карточки"
+        text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
         text=text_answer,

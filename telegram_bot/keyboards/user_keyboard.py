@@ -13,8 +13,10 @@ from models import CardImage
 def create_main_inline(user_id: int):
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="🎮 Карты", callback_data="maps"))
-    builder.row(InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_maps"))
-    builder.row(InlineKeyboardButton(text="❤️ Избранное", callback_data="favorites"))
+    builder.row(
+        InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_maps"),
+        InlineKeyboardButton(text="❤️ Избранное", callback_data="favorites")
+    )
     builder.row(InlineKeyboardButton(text="👤 Профиль", callback_data="profile"))
 
     if user_id in cfg.ADMIN_IDS:
@@ -67,7 +69,6 @@ async def create_maps_inline(admin: bool = False):
                         callback_data=f"{tag}:{maps[i].id}"
                     )
                 )
-                cfg.logger.info(f"{tag}:{maps[i].id}")
     else:
        text = "Нет доступных карт"
 
@@ -111,7 +112,6 @@ async def create_categories_inline(map_id: int, admin: bool = False):
                         callback_data=f"{tag}:{map_id}:{categories[i].id}"
                     )
                 )
-
     else:
         text = "Нет доступных категорий"
 
@@ -147,7 +147,6 @@ async def create_cards_inline(map_id: int, category_id: int):
                         callback_data=f"card:{map_id}:{category_id}:{cards[i].id}"
                     )
                 )
-
     else:
         text = "Нет доступных карточек"
 
