@@ -6,7 +6,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from telegram_bot.core import cfg
 from telegram_bot.crud import (sql_get_all_maps, sql_get_categories_by_map, sql_get_cards_by_category,
                                sql_get_card_image_by_id)
-from telegram_bot.models import CardImage
+from models import CardImage
 
 
 # Создаем инлайн кнопки (главное меню)
