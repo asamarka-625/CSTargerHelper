@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.dialects.postgresql import insert
 # Внутренние модули
 from telegram_bot.core import cfg
 from models import User, Card, UserFavorite
@@ -19,7 +20,7 @@ async def sql_add_or_update_user(
     session: AsyncSession
 ) -> None:
     try:
-        stmt = sa.insert(User).values(
+        stmt = insert(User).values(
             telegram_id=telegram_id,
             telegram_username=telegram_username,
             telegram_first_name=telegram_first_name,
