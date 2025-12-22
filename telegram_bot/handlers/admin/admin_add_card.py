@@ -23,8 +23,8 @@ class AddCard(StatesGroup):
 router = Router()
 
 
-# Колбэк добавления категории
-@router.callback_query(F.data == "add category", F.from_user.id.in_(cfg.ADMIN_IDS))
+# Колбэк добавления карточки
+@router.callback_query(F.data == "add card", F.from_user.id.in_(cfg.ADMIN_IDS))
 async def admin_add_card_callback_run(callback_query: CallbackQuery, state: FSMContext):
     try:
         text, keyboard = await create_maps_inline(admin=True)
