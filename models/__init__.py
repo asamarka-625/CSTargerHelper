@@ -1,2 +1,2 @@
-from telegram_bot.models.base import Base
-from telegram_bot.models.model import Map, Category, CardImage, Card, User
+from models.base import Base
+from models.model import Map, Category, CardImage, Card, User, UserFavorite

@@ -3,7 +3,7 @@ from typing import List, Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 # Внутренние модули
-from telegram_bot.models.base import Base
+from models.base import Base
 
 
 # Модель Карты
@@ -221,6 +221,11 @@ class User(Base):
     telegram_last_name: so.Mapped[Optional[str]] = so.mapped_column(
         sa.String(64),
         nullable=True
+    )
+    block_post: so.Mapped[bool] = so.mapped_column(
+        sa.Boolean,
+        nullable=False,
+        default=False
     )
 
     # Связи
