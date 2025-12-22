@@ -26,7 +26,7 @@ async def start_command(message: Message, state: FSMContext):
     await message.answer_photo(
         photo=FSInputFile(f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"),
         caption=cfg.MAIN_USER_TEXT,
-        reply_markup=await create_main_inline(user_id=message.from_user.id)
+        reply_markup=create_main_inline(user_id=message.from_user.id)
     )
 
 

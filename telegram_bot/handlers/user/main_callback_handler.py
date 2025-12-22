@@ -17,7 +17,7 @@ async def get_profile_callback_run(callback_query: CallbackQuery):
         user_data = await sql_get_user_info(telegram_id=callback_query.from_user.id)
         user_hash = create_short_hash(*user_data)
         
-        keyboard = await create_profile_inline(hash_user_data=user_hash)
+        keyboard = create_profile_inline(hash_user_data=user_hash)
         
         text = f"""
         username: {user_data[0]}\n
@@ -58,7 +58,7 @@ async def update_profile_callback_run(callback_query: CallbackQuery):
         new_user_hash = create_short_hash(*user_data)
         
         if old_user_hash != new_user_hash:
-            keyboard = await create_profile_inline(hash_user_data=new_user_hash)
+            keyboard = create_profile_inline(hash_user_data=new_user_hash)
             
             text = f"""
             username: {user_data[0]}\n

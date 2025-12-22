@@ -38,7 +38,7 @@ async def sql_add_category_for_map(
     session: AsyncSession
 ) -> None:
     try:
-        new_category = Category(name=name, map_id=map_id)
+        new_category = Category(name=name.lower(), map_id=map_id)
         session.add(new_category)
         await session.commit()
 

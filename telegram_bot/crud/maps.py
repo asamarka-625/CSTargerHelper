@@ -31,7 +31,7 @@ async def sql_get_all_maps(session: AsyncSession) -> Sequence[Map]:
 @connection
 async def sql_add_map(name: str, image: str, session: AsyncSession) -> None:
     try:
-        new_map = Map(name=name, image=image)
+        new_map = Map(name=name.lower(), image=image)
         session.add(new_map)
         await session.commit()
 

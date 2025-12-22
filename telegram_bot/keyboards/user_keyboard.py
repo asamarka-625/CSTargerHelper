@@ -10,7 +10,7 @@ from models import CardImage
 
 
 # Создаем инлайн кнопки (главное меню)
-async def create_main_inline(user_id: int):
+def create_main_inline(user_id: int):
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="🎮 Карты", callback_data="maps"))
 
@@ -21,7 +21,7 @@ async def create_main_inline(user_id: int):
 
 
 # Создаем инлайн кнопки профиля
-async def create_profile_inline(hash_user_data: str):
+def create_profile_inline(hash_user_data: str):
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Обновить", callback_data=f"upd_profile:{hash_user_data}"))
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data="back main"))
@@ -69,7 +69,7 @@ async def create_maps_inline(admin: bool = False):
        text = "Нет доступных карт"
 
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=back))
-
+    cfg.logger.info(builder)
     return text, builder.as_markup()
 
 
