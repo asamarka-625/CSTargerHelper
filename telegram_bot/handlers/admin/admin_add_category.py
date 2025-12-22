@@ -23,11 +23,11 @@ router = Router()
 @router.callback_query(F.data == "add category", F.from_user.id.in_(cfg.ADMIN_IDS))
 async def admin_add_category_callback_run(callback_query: CallbackQuery, state: FSMContext):
     try:
-        keyboard = await create_maps_inline(admin=True)
+        text, keyboard = await create_maps_inline(admin=True)
 
         await edit_message(
             message=callback_query.message,
-            text="Выберите карту, в которую нужно добавить категорию",
+            text=text,
             keyboard=keyboard
         )
         text_answer = "Выберите карту"

@@ -20,10 +20,10 @@ async def get_profile_callback_run(callback_query: CallbackQuery):
         keyboard = create_profile_inline(hash_user_data=user_hash)
         
         text = f"""
-        username: {user_data[0]}\n
-        name: {user_data[1]}\n
-        last_name: {user_data[2]}\n
-        Кол-во созданных карточек: {user_data[3]}\n
+        username: {user_data[0]}
+        name: {user_data[1]}
+        last_name: {user_data[2]}
+        Кол-во созданных карточек: {user_data[3]}
         Кол-во карточек в избранном: {user_data[4]}
         """
         
@@ -44,7 +44,7 @@ async def get_profile_callback_run(callback_query: CallbackQuery):
     
 
 # Колбэк обновления профиля
-@router.callback_query(F.data == "upd_profile:")
+@router.callback_query(F.data.startswith("upd_profile:"))
 async def update_profile_callback_run(callback_query: CallbackQuery):
     old_user_hash = callback_query.data.replace("upd_profile:", "")
     
