@@ -64,12 +64,12 @@ async def create_maps_inline(admin: bool = False):
                         callback_data=f"{tag}:{maps[i].id}"
                     )
                 )
-
+                cfg.logger.info(f"{tag}:{maps[i].id}")
     else:
        text = "Нет доступных карт"
 
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=back))
-    cfg.logger.info(builder)
+
     return text, builder.as_markup()
 
 
