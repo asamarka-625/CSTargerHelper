@@ -173,6 +173,7 @@ async def create_card_images_inline(
         image = next((image for i, image in enumerate(images) if image.order == order), None)
         prev_image, next_image = False, image.order < len(images)
 
+    cfg.logger.info(f"prev_image: {prev_image}, next_image: {next_image}, {image.order}, {len(images)}")
     builder = InlineKeyboardBuilder()
     navigation = []
 

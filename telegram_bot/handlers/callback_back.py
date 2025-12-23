@@ -32,7 +32,7 @@ async def back_callback_run(callback_query: CallbackQuery):
         data["text"], data["keyboard"] = await create_categories_inline(map_id=map_id)
 
     elif back.startswith("cards:"):
-        map_category_id = callback_query.data.replace("cards:", "")
+        map_category_id = back.replace("cards:", "")
         map_id, category_id = map(int, map_category_id.split(":"))
 
         data["text"], data["keyboard"] = await create_cards_inline(map_id=map_id, category_id=category_id)
