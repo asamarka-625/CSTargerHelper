@@ -161,17 +161,22 @@ async def create_card_images_inline(
     category_id: int,
     card_id: int,
     order: int,
+    max_image: Optional[int] = None,
     images: Optional[List[CardImage]] = None
 ):
+    if max_image is None:
+        max_image = len(images)
+
     if images is None:
-        prev_image, next_image, image = await sql_get_card_image_by_id(
+        image = await sql_get_card_image_by_id(
             card_id=card_id,
             order=order
         )
 
     else:
         image = next((image for i, image in enumerate(images) if image.order == order), None)
-        prev_image, next_image = False, image.order < len(images)
+
+    prev_image, next_image = image.order > 1, image.order < max_image
 
     builder = InlineKeyboardBuilder()
     navigation = []
@@ -179,13 +184,13 @@ async def create_card_images_inline(
     if prev_image:
         navigation.append(InlineKeyboardButton(
             text="⬅️ Предыдущая",
-            callback_data=f"image:{map_id}:{category_id}:{card_id}:{order-1}")
+            callback_data=f"image:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
         )
 
     if next_image:
         navigation.append(InlineKeyboardButton(
             text="Следующая ➡️",
-            callback_data=f"image:{map_id}:{category_id}:{card_id}:{order+1}")
+            callback_data=f"image:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
         )
 
     if navigation:

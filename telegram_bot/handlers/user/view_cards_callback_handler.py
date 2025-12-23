@@ -126,15 +126,16 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
 # Колбэк навигации по карточке
 @router.callback_query(F.data.startswith("image:"))
 async def navigation_card_callback_run(callback_query: CallbackQuery):
-    map_category_card_order_id = callback_query.data.replace("image:", "")
-    map_id, category_id, card_id, order = map(int, map_category_card_order_id.split(":"))
+    map_category_card_image_order_id = callback_query.data.replace("image:", "")
+    map_id, category_id, card_id, max_image, order = map(int, map_category_card_image_order_id.split(":"))
 
     try:
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
             category_id=category_id,
             card_id=card_id,
-            order=order
+            order=order,
+            max_image=max_image
         )
 
         await edit_message(

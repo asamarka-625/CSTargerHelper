@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence, Tuple, List
+from typing import Sequence, List
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -124,25 +124,22 @@ async def sql_get_card_image_by_id(
     card_id: int,
     session: AsyncSession,
     order: int
-) -> Tuple[bool, bool, str]:
+) -> CardImage:
     try:
-        images_result = await session.execute(
-            sa.select(CardImage.file_name, CardImage.order)
-            .where(CardImage.card_id == card_id)
-            .options(
-                so.selectinload(Card.images)
+        image_result = await session.execute(
+            sa.select(CardImage)
+            .where(
+                CardImage.card_id == card_id,
+                CardImage.order == order
             )
-            .order_by(CardImage.order)
         )
-        images = images_result.scalars().all()
-        image_i = next((i for i, image in enumerate(images) if image[1] == order), None)
+        image = image_result.scalar_one()
 
-        if image_i is None:
-            cfg.logger.info(f"Card not found image by сard_id = {card_id}, order = {order}")
-            raise NoResultFound
+        return image
 
-        return (image_i > 1, image_i < len(images), images[image_i])
-
+    except NoResultFound:
+        cfg.logger.info(f"Image not found by сard_id = {card_id}, order = {order}")
+        raise
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading image by сard_id = {card_id}, order = {order}: {e}")
