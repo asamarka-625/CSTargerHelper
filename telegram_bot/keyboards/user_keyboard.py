@@ -172,11 +172,11 @@ async def create_card_images_inline(
             card_id=card_id,
             order=order
         )
-        prev_image, next_image = False, order > 1
+        prev_image, next_image = image.order > 1, image.order < max_image
 
     else:
         image = next((image for i, image in enumerate(images) if image.order == order), None)
-        prev_image, next_image = image.order > 1, image.order < max_image
+        prev_image, next_image = False, order > 1
 
     builder = InlineKeyboardBuilder()
     navigation = []
