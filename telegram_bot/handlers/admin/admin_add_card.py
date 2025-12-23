@@ -142,7 +142,8 @@ async def add_card_images(message: Message, state: FSMContext, bot: Bot):
     card_id = await sql_add_card(
         name=data["name"],
         description=data["description"],
-        category_id=data["category_id"]
+        category_id=data["category_id"],
+        custom=False
     )
 
     for i, photo in enumerate(photos, 1):

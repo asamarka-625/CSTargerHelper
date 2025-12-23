@@ -65,13 +65,15 @@ async def sql_add_card(
     name: str,
     description: str,
     category_id: int,
+    custom: bool,
     session: AsyncSession
 ) -> int:
     try:
         new_card = Card(
             name=name,
             description=description,
-            category_id=category_id
+            category_id=category_id,
+            custom=custom
         )
         session.add(new_card)
         await session.commit()
@@ -98,7 +100,7 @@ async def sql_add_card_image(
 ) -> None:
     try:
         new_card_image = CardImage(
-           file_name=file_name,
+            file_name=file_name,
             order=order,
             card_id=card_id
         )

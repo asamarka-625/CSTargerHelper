@@ -129,8 +129,8 @@ class Card(Base):
         sa.String(1024),
         nullable=False
     )
-    card_number: so.Mapped[int] = so.mapped_column(
-        sa.Integer,
+    card_number: so.Mapped[str] = so.mapped_column(
+        sa.String,
         unique=True,
         index=True,
         nullable=False
@@ -255,13 +255,13 @@ def generate_temp_card_number_before_insert(mapper, connection, target):
     """Генерирует временный уникальный card_number перед вставкой"""
     if target.card_number is None:
         # Генерируем временное отрицательное число на основе UUID
-        target.card_number = -abs(hash(str(uuid.uuid4()))) % 1000000
+        target.card_number = f"-{str(uuid.uuid4())}"
 
 
 @event.listens_for(Card, 'after_insert')
 def update_real_card_number_after_insert(mapper, connection, target):
     """Заменяем временный card_number на настоящий после получения id"""
-    if target.card_number < 0:  # Если это временное значение
+    if target.card_number[0] == "-":  # Если это временное значение
         new_card_number = generate_card_number_from_id(target.id)
         connection.execute(
             Card.__table__.update()
