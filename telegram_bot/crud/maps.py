@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence
+from typing import Sequence, Tuple
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
@@ -11,12 +11,19 @@ from telegram_bot.core import connection
 
 # Выводим все карты
 @connection
-async def sql_get_all_maps(session: AsyncSession) -> Sequence[Map]:
+async def sql_get_all_maps(
+    session: AsyncSession,
+    offset: int = 0
+) -> Tuple[bool, bool, Sequence]:
     try:
-        maps_result = await session.execute(sa.select(Map))
+        maps_result = await session.execute(
+            sa.select(Map.id, Map.name)
+            .offset(offset)
+            .limit(cfg.LIMIT_VIEW_PAGE + 1)
+        )
         maps = maps_result.scalars().all()
 
-        return maps
+        return offset > 0, len(maps) > (offset + cfg.LIMIT_VIEW_PAGE), maps[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all maps: {e}")

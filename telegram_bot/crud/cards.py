@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence, List
+from typing import Sequence, List, Tuple
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,15 +12,19 @@ from telegram_bot.core import connection
 
 # Выводим все карточки для категории
 @connection
-async def sql_get_cards_by_category(category_id: int, session: AsyncSession) -> Sequence[Card]:
+async def sql_get_cards_by_category(
+    category_id: int,
+    session: AsyncSession,
+    offset: int = 0
+) -> Tuple[bool, bool, Sequence]:
     try:
         cards_result = await session.execute(
-            sa.select(Card)
+            sa.select(Card.id, Card.name)
             .where(Card.category_id == category_id)
         )
         cards = cards_result.scalars().all()
 
-        return cards
+        return offset > 0, len(cards) > (offset + cfg.LIMIT_VIEW_PAGE), cards[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all cards by category_id = {category_id}: {e}")

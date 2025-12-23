@@ -92,14 +92,14 @@ class Parser:
             print(f"(download) Unexpected error: {err}")
 
     async def run(self):
-        maps = await sql_get_all_maps()
+        _, _, maps = await sql_get_all_maps()
 
         for m in maps:
             await asyncio.sleep(0.5)
 
-            print(f"Карта: https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m.name}/")
+            print(f"Карта: https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m[1]}/")
             content = self.get_response(
-                url_path=f"https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m.name}/"
+                url_path=f"https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m[1]}/"
             )
             categories = self.get_name_and_link(content=content)
 
@@ -108,7 +108,7 @@ class Parser:
 
                 category_id = await sql_add_category_for_map(
                     name=category_name_with_visual.get(category_name.lower(), "none"),
-                    map_id=m.id
+                    map_id=m[0]
                 )
 
                 print(f"Категория: {category_link}")

@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence
+from typing import Sequence, Tuple
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,15 +11,21 @@ from telegram_bot.core import connection
 
 # Выводим все категории для карты
 @connection
-async def sql_get_categories_by_map(map_id: int, session: AsyncSession) -> Sequence[Category]:
+async def sql_get_categories_by_map(
+    map_id: int,
+    session: AsyncSession,
+    offset: int = 0
+) -> Tuple[bool, bool, Sequence]:
     try:
         categories_result = await session.execute(
-            sa.select(Category)
+            sa.select(Category.id, Category.name)
             .where(Category.map_id == map_id)
+            .offset(offset)
+            .limit(cfg.LIMIT_VIEW_PAGE + 1)
         )
         categories = categories_result.scalars().all()
 
-        return categories
+        return offset > 0, len(categories) > (offset + cfg.LIMIT_VIEW_PAGE), categories[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all categories by map_id = {map_id}: {e}")

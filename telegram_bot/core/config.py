@@ -26,6 +26,8 @@ class Config:
         default_factory=lambda: tuple(int(admin_id.strip()) for admin_id in os.getenv("ADMIN_IDS").split(","))
     )
 
+    LIMIT_VIEW_PAGE: int = field(init=False)
+
     def __post_init__(self):
         self.logger = setup_logger(
             level=os.getenv("LOG_LEVEL", "INFO"),
@@ -35,6 +37,8 @@ class Config:
 
         self.MAIN_USER_TEXT: str = "Добро пожаловать!"
         self.MAIN_ADMIN_TEXT: str = "Добро пожаловать, Админ!"
+
+        self.LIMIT_VIEW_PAGE: int = 8
 
         self.validate()
         self.logger.info("Configuration initialized")
