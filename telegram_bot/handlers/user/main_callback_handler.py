@@ -19,13 +19,13 @@ async def get_profile_callback_run(callback_query: CallbackQuery):
         
         keyboard = create_profile_inline(hash_user_data=user_hash)
         
-        text = f"""
-        username: {user_data[0]}
-        name: {user_data[1]}
-        last_name: {user_data[2]}
-        Кол-во созданных карточек: {user_data[3]}
-        Кол-во карточек в избранном: {user_data[4]}
-        """
+        text = (
+            f"username: {user_data[0]}\n"
+            f"name: {user_data[1]}\n"
+            f"last_name: {user_data[2]}\n"
+            f"Кол-во созданных карточек: {user_data[3]}\n"
+            f"Кол-во карточек в избранном: {user_data[4]}\n"
+        )
         
         await edit_message(
             message=callback_query.message,

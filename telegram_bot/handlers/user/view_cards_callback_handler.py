@@ -101,11 +101,10 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
             images=card.images
         )
 
-        text = f"""
-        <b>{card.name}</b>\n\n
-        Описание: {card.description}
-        """
-        cfg.logger.info(f"Text: {text}")
+        text = (
+            f"<b>{card.name}</b>\n\n"
+            f"Описание: {card.description}"
+        )
 
         await edit_message(
             message=callback_query.message,
@@ -116,8 +115,6 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
         text_answer = f"Карточка {card.name}"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
@@ -152,8 +149,6 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
         text_answer = "Навигация по карточке"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка навигации по карточке"
 
     await callback_query.answer(
