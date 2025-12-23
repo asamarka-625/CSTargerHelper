@@ -154,7 +154,7 @@ async def add_card_images(
     )
 
     card_images = {
-        "filenames": [],
+        "file_names": [],
         "orders": []
     }
     for i, msg in enumerate(messages, 1):
