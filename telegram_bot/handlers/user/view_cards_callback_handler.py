@@ -114,7 +114,10 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
         )
         text_answer = f"Карточка {card.name}"
 
-    except:
+    except Exception as err:
+        import traceback
+        traceback.print_exc()
+        cfg.logger.error(f"Error: {err}")
         text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
