@@ -1,18 +1,10 @@
 # Внешние зависимости
 import asyncio
-# import logging
 # Внутренние модули
 from telegram_bot.core import dp, bot, cfg, setup_database
 from telegram_bot.middlewares import LoggingMiddleware, ChatActionMiddleware
 from telegram_bot.handlers import router
 
-
-"""
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-"""
 
 async def main():
     cfg.logger.info("Инициализируем приложение...")

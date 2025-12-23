@@ -70,7 +70,7 @@ async def sql_add_card(
 ) -> int:
     try:
         new_card = Card(
-            name=name,
+            name=name.lower(),
             description=description,
             category_id=category_id,
             custom=custom

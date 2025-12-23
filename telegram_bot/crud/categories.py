@@ -36,11 +36,14 @@ async def sql_add_category_for_map(
     name: str,
     map_id: int,
     session: AsyncSession
-) -> None:
+) -> int:
     try:
         new_category = Category(name=name.lower(), map_id=map_id)
         session.add(new_category)
         await session.commit()
+        await session.refresh(new_category)
+
+        return new_category.id
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error add new category for map_id = {map_id}: {e}")
