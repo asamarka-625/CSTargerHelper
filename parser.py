@@ -97,6 +97,7 @@ class Parser:
         for m in maps:
             await asyncio.sleep(0.5)
 
+            print(f"Карта: https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m.name}/")
             content = self.get_response(
                 url_path=f"https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m.name}/"
             )
@@ -110,12 +111,14 @@ class Parser:
                     map_id=m.id
                 )
 
+                print(f"Категория: {category_link}")
                 content = self.get_response(url_path=category_link)
                 cards = self.get_name_and_link(content=content)
 
                 for card_name, card_link in cards:
                     await asyncio.sleep(0.5)
 
+                    print(f"Карточка: {card_link}")
                     content = self.get_response(url_path=card_link)
                     card_description, image_links = self.get_image_and_step(content=content)
 
@@ -135,6 +138,7 @@ class Parser:
 
                         image_name = f"{uuid.uuid4()}.jpg"
 
+                        print(f"Изображение: {image_link}")
                         self.download_image(
                             url_path=image_link,
                             filename=image_name
