@@ -3,17 +3,19 @@ from typing import Optional
 from aiogram.types import Message, InputMediaPhoto, FSInputFile
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from telegram_bot.core import cfg
+
 
 async def edit_message(
-        message: Message,
-        text: Optional[str] = None,
-        keyboard: Optional[InlineKeyboardBuilder] = None,
-        media: Optional[str] = None
+    message: Message,
+    text: Optional[str] = None,
+    keyboard: Optional[InlineKeyboardBuilder] = None,
+    media: Optional[str] = None
 ):
     add_kwargs = {}
 
-    if text is not None:
-        add_kwargs["caption"] = text
+    if text is None:
+        text = message.text
 
     if keyboard is None:
         add_kwargs['reply_markup'] = message.reply_markup
@@ -21,11 +23,13 @@ async def edit_message(
     else:
         add_kwargs['reply_markup'] = keyboard
 
+    cfg.logger.info(f"{add_kwargs}")
     if media is not None:
         add_kwargs["media"] = InputMediaPhoto(
-            media=FSInputFile(media)
+            media=FSInputFile(media),
+            caption=text
         )
         await message.edit_media(**add_kwargs)
 
     else:
-        await message.edit_caption(**add_kwargs)
+        await message.edit_caption(caption=text, **add_kwargs)
