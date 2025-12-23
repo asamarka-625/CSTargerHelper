@@ -173,7 +173,6 @@ async def create_card_images_inline(
         image = next((image for i, image in enumerate(images) if image.order == order), None)
         prev_image, next_image = False, image.order < len(images)
 
-    cfg.logger.info(f"prev_image: {prev_image}, next_image: {next_image}, {image.order}, {len(images)}")
     builder = InlineKeyboardBuilder()
     navigation = []
 
@@ -188,6 +187,9 @@ async def create_card_images_inline(
             text="Следующая ➡️",
             callback_data=f"image:{map_id}:{category_id}:{card_id}:{order+1}")
         )
+
+    if navigation:
+        builder.row(*navigation)
 
     builder.row(InlineKeyboardButton(
         text="🔙 Назад",
