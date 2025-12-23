@@ -116,6 +116,8 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
         text_answer = f"Карточка {card.name}"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
