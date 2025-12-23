@@ -143,12 +143,12 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
 
         if "- Изображение " in callback_query.message.caption:
             text = callback_query.message.caption.replace(
-                f"Изображение {order-1}/{max_image}",
-                f"Изображение {order-1}/{max_image}"
+                f"- Изображение ",
+                f"- Изображение {order}/{max_image}"
             )
 
         else:
-            text = f"- Изображение {order-1}/{max_image}\n\n{callback_query.message.caption}"
+            text = f"- Изображение {order}/{max_image}\n\n{callback_query.message.caption}"
 
         await edit_message(
             message=callback_query.message,
