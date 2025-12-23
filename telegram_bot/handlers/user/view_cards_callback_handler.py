@@ -97,7 +97,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
             map_id=map_id,
             category_id=category_id,
             card_id=card_id,
-            order=1,
+            order=len(card.images),
             images=card.images
         )
 
@@ -105,6 +105,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
         <b>{card.name}</b>\n\n
         Описание: {card.description}
         """
+        cfg.logger.info(f"Text: {text}")
 
         await edit_message(
             message=callback_query.message,
@@ -130,6 +131,9 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
     map_id, category_id, card_id, max_image, order = map(int, map_category_card_image_order_id.split(":"))
 
     try:
+        if order > max_image:
+            order = 1
+
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
             category_id=category_id,
@@ -146,6 +150,8 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
         text_answer = "Навигация по карточке"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка навигации по карточке"
 
     await callback_query.answer(
