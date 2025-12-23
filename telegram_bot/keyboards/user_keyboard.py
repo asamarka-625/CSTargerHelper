@@ -170,7 +170,7 @@ async def create_card_images_inline(
         )
 
     else:
-        image = next((image.file_name for i, image in enumerate(images) if image.order == order), None)
+        image = next((image for i, image in enumerate(images) if image.order == order), None)
         prev_image, next_image = False, image.order < len(images)
 
     builder = InlineKeyboardBuilder()
@@ -193,4 +193,4 @@ async def create_card_images_inline(
         callback_data=f"back cards:{map_id}:{category_id}")
     )
 
-    return image, builder.as_markup()
+    return image.file_name, builder.as_markup()
