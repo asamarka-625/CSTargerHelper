@@ -170,7 +170,7 @@ async def create_card_images_inline(
         )
 
     else:
-        image = next((image for i, image in enumerate(images) if image.order == order), None)
+        image = next((image.file_name for i, image in enumerate(images) if image.order == order), None)
         prev_image, next_image = False, image.order < len(images)
 
     builder = InlineKeyboardBuilder()
