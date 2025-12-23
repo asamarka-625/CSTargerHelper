@@ -142,7 +142,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
         )
 
         if "- Изображение " in callback_query.message.caption:
-            caption = callback_query.message.caption.split("\n\n")[1:]
+            caption = "\n\n".join(callback_query.message.caption.split("\n\n")[1:])
 
         else:
             caption = callback_query.message.caption
