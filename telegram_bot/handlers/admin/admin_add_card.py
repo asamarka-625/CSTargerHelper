@@ -1,9 +1,11 @@
 # Внешние зависимости
+from typing import List
 import uuid
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery, Message
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram_media_group import media_group_handler
 # Внутренние модули
 from telegram_bot.core import cfg
 from telegram_bot.keyboards import create_maps_inline, create_admin_inline, create_categories_inline
@@ -133,10 +135,15 @@ async def add_card_description(message: Message, state: FSMContext):
 @router.message(
     AddCard.state_card_images,
     F.photo,
+    F.media_group_id,
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
-async def add_card_images(message: Message, state: FSMContext, bot: Bot):
-    photos = message.photo
+@media_group_handler
+async def add_card_images(
+    messages: List[Message],
+    state: FSMContext,
+    bot: Bot
+):
     data = await state.get_data()
 
     card_id = await sql_add_card(
@@ -146,22 +153,28 @@ async def add_card_images(message: Message, state: FSMContext, bot: Bot):
         custom=False
     )
 
-    for i, photo in enumerate(photos, 1):
-        # Скачиваем фото
-        file_info = await bot.get_file(photo[-1].file_id)
+    card_images = {
+        "filenames": [],
+        "orders": []
+    }
+    for i, msg in enumerate(messages, 1):
+        photo = msg.photo[-1]
+        file_info = await bot.get_file(photo.file_id)
         file_name = f"{uuid.uuid4()}.jpg"
 
         await bot.download_file(file_info.file_path, f"{cfg.IMAGES_DIR}/cards/{file_name}")
 
-        await sql_add_card_image(
-            file_name=file_name,
-            order=i,
-            card_id=card_id
-        )
+        card_images["filenames"].append(file_name)
+        card_images["orders"].append(i)
+
+    await sql_add_card_image(
+        card_id=card_id,
+        **card_images
+    )
 
     await state.clear()
 
-    await message.answer(
-        text=f"Новая карточка '{data["name"]}' успешно добавлена!",
+    await messages[-1].answer(
+        text=f"Новая карточка '{data['name']}' успешно добавлена!",
         reply_markup=await create_admin_inline()
     )

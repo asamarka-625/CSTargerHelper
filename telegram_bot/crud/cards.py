@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence, Tuple
+from typing import Sequence, Tuple, List
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -93,18 +93,20 @@ async def sql_add_card(
 # Добавляем новое изображение карточки
 @connection
 async def sql_add_card_image(
-    file_name: str,
-    order: int,
+    file_names: List[str],
+    orders: List[int],
     card_id: int,
     session: AsyncSession
 ) -> None:
     try:
-        new_card_image = CardImage(
-            file_name=file_name,
-            order=order,
-            card_id=card_id
-        )
-        session.add(new_card_image)
+        for file_name, order in zip(file_names, orders):
+            new_card_image = CardImage(
+                file_name=file_name,
+                order=order,
+                card_id=card_id
+            )
+            session.add(new_card_image)
+
         await session.commit()
 
     except SQLAlchemyError as e:
