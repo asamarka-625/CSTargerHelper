@@ -13,7 +13,7 @@ async def edit_message(
     add_kwargs = {}
 
     if text is None:
-        text = message.text
+        text = message.caption
 
     if keyboard is None:
         add_kwargs['reply_markup'] = message.reply_markup
