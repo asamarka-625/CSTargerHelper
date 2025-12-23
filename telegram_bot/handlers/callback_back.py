@@ -26,6 +26,7 @@ async def back_callback_run(callback_query: CallbackQuery):
 
     elif back == "map":
         data["text"], data["keyboard"] = await create_maps_inline()
+        data["media"] = f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"
 
     elif back.startswith("category:"):
         map_id = int(back.replace("category:", ""))
