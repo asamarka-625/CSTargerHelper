@@ -133,7 +133,7 @@ class Parser:
                         "file_names": [],
                         "orders": []
                     }
-                    for i, image_link in enumerate(image_links):
+                    for i, image_link in enumerate(image_links, 1):
                         await asyncio.sleep(0.5)
 
                         image_name = f"{uuid.uuid4()}.jpg"
