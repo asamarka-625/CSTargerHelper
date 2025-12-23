@@ -141,14 +141,14 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
             max_image=max_image
         )
 
-        if "Шаг " in callback_query.message.caption:
+        if "- Изображение " in callback_query.message.caption:
             text = callback_query.message.caption.replace(
                 f"Шаг {order-1}/{max_image}",
                 f"Шаг {order-1}/{max_image}"
             )
 
         else:
-            text = f"Шаг {order-1}/{max_image}\n\n{callback_query.message.caption}"
+            text = f"- Изображение {order-1}/{max_image}\n\n{callback_query.message.caption}"
 
         await edit_message(
             message=callback_query.message,
