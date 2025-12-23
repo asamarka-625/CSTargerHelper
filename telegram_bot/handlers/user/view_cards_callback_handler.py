@@ -110,14 +110,11 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
             message=callback_query.message,
             text=text,
             keyboard=keyboard,
-            media=image
+            media=f"{cfg.IMAGES_DIR}/cards/{image}"
         )
         text_answer = f"Карточка {card.name}"
 
-    except Exception as err:
-        import traceback
-        traceback.print_exc()
-        cfg.logger.error(f"Error: {err}")
+    except:
         text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
@@ -143,7 +140,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
         await edit_message(
             message=callback_query.message,
             keyboard=keyboard,
-            media=image
+            media=f"{cfg.IMAGES_DIR}/cards/{image}"
         )
         text_answer = "Навигация по карточке"
 
