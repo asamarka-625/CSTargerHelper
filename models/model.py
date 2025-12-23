@@ -1,7 +1,10 @@
 # Внешние зависимости
 from typing import List, Optional
+import uuid
+import hashlib
 import sqlalchemy as sa
 import sqlalchemy.orm as so
+from sqlalchemy import event
 # Внутренние модули
 from models.base import Base
 
@@ -177,7 +180,7 @@ class Card(Base):
 
     def __str__(self):
         return self.name
-        
+
 
 # Модель для связи cards и users (избранное)
 class UserFavorite(Base):
@@ -245,3 +248,36 @@ class User(Base):
 
     def __str__(self):
         return self.telegram_id
+
+
+@event.listens_for(Card, 'before_insert')
+def generate_temp_card_number_before_insert(mapper, connection, target):
+    """Генерирует временный уникальный card_number перед вставкой"""
+    if target.card_number is None:
+        # Генерируем временное отрицательное число на основе UUID
+        target.card_number = -abs(hash(str(uuid.uuid4()))) % 1000000
+
+
+@event.listens_for(Card, 'after_insert')
+def update_real_card_number_after_insert(mapper, connection, target):
+    """Заменяем временный card_number на настоящий после получения id"""
+    if target.card_number < 0:  # Если это временное значение
+        new_card_number = generate_card_number_from_id(target.id)
+        connection.execute(
+            Card.__table__.update()
+            .where(Card.id == target.id)
+            .values(card_number=new_card_number)
+        )
+        target.card_number = new_card_number
+
+
+def generate_card_number_from_id(card_id: int) -> str:
+    """Генерация с SHA256 - возвращает строку"""
+    hash_bytes = hashlib.sha256(str(card_id).encode()).digest()
+
+    letter1 = chr(65 + (hash_bytes[0] % 26))
+    letter2 = chr(65 + (hash_bytes[8] % 26))
+    letter3 = chr(65 + (hash_bytes[31] % 26))
+
+    # Форматируем как строку
+    return f"{letter1}{letter2}{letter3}{card_id:03}"
