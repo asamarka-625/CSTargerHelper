@@ -3,6 +3,8 @@ from typing import Optional
 from aiogram.types import Message, InputMediaPhoto, FSInputFile
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from telegram_bot.core import cfg
+
 
 async def edit_message(
     message: Message,
@@ -12,6 +14,7 @@ async def edit_message(
 ):
     add_kwargs = {}
 
+    cfg.logger.info(text)
     if text is None:
         text = message.caption
 
