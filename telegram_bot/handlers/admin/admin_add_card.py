@@ -164,7 +164,7 @@ async def add_card_images(
 
         await bot.download_file(file_info.file_path, f"{cfg.IMAGES_DIR}/cards/{file_name}")
 
-        card_images["filenames"].append(file_name)
+        card_images["file_names"].append(file_name)
         card_images["orders"].append(i)
 
     await sql_add_card_image(
