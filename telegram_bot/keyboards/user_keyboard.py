@@ -59,7 +59,7 @@ def create_page(
     if navigation:
         builder.row(*navigation)
 
-    builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=back))
+    builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=f"back {back}"))
 
     return builder
 
@@ -123,11 +123,11 @@ async def create_maps_inline(
 
     if not admin:
         tag = "map"
-        back = "back main"
+        back = "main"
 
     else:
         tag = "map-admin"
-        back = "back admin"
+        back = "admin"
 
 
     text = create_text_on_page(
@@ -162,11 +162,11 @@ async def create_categories_inline(
 
     if not admin:
         tag = f"category:{map_id}"
-        back = "back map"
+        back = "map"
 
     else:
         tag = f"category-admin:{map_id}"
-        back = "back admin"
+        back = "admin"
 
     text = create_text_on_page(
         obj=categories,
@@ -211,7 +211,7 @@ async def create_cards_inline(
         next_page=next_page,
         offset=offset,
         tag=f"card:{map_id}:{category_id}",
-        back=f"back category:{map_id}"
+        back=f"category:{map_id}"
     )
 
     return text, builder.as_markup()

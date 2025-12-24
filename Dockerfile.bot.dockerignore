@@ -29,3 +29,6 @@ docker-compose.yml
 web_app
 parser.py
 web.env
+
+# Nginx
+promapp
