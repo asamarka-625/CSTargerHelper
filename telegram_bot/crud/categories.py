@@ -23,7 +23,7 @@ async def sql_get_categories_by_map(
             .offset(offset)
             .limit(cfg.LIMIT_VIEW_PAGE + 1)
         )
-        categories = categories_result.scalars().all()
+        categories = categories_result.all()
 
         return offset > 0, len(categories) > (offset + cfg.LIMIT_VIEW_PAGE), categories[:cfg.LIMIT_VIEW_PAGE]
 

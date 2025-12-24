@@ -22,7 +22,7 @@ async def sql_get_cards_by_category(
             sa.select(Card.id, Card.name)
             .where(Card.category_id == category_id)
         )
-        cards = cards_result.scalars().all()
+        cards = cards_result.all()
 
         return offset > 0, len(cards) > (offset + cfg.LIMIT_VIEW_PAGE), cards[:cfg.LIMIT_VIEW_PAGE]
 

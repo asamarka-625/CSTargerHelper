@@ -73,7 +73,6 @@ def create_text_on_page(
 ) -> str:
     text = f"{text_for_exists}\n\n"
     if obj:
-        cfg.logger.info(f"{obj}")
         for i in range(0, len(obj), 2):
             id_num = i + offset
             if (i + 1) < len(obj):

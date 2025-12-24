@@ -21,7 +21,7 @@ async def sql_get_all_maps(
             .offset(offset)
             .limit(cfg.LIMIT_VIEW_PAGE + 1)
         )
-        maps = maps_result.scalars().all()
+        maps = maps_result.all()
 
         return offset > 0, len(maps) > (offset + cfg.LIMIT_VIEW_PAGE), maps[:cfg.LIMIT_VIEW_PAGE]
 
