@@ -19,10 +19,10 @@ router = Router()
 async def prev_next_callback_run(callback_query: CallbackQuery):
     if callback_query.data.startswith("prev "):
         nav = callback_query.data.replace("prev ", "")
-        page_down = 1
+        page_up = -1
     else:
         nav = callback_query.data.replace("next ", "")
-        page_down = 0
+        page_down = 1
 
     data = {}
     if nav.startswith("map"):
