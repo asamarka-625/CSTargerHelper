@@ -5,8 +5,8 @@ import asyncio
 import requests
 from bs4 import BeautifulSoup
 # Внутренние модули
-from telegram_bot import (sql_add_category_for_map, sql_get_all_maps, sql_add_card,
-                          sql_add_card_image)
+from telegram_bot.crud import (sql_add_category_for_map, sql_get_all_maps, sql_add_card,
+                               sql_add_card_image)
 
 
 category_name_with_visual = {
