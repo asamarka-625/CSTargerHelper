@@ -118,7 +118,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             f"<b>Номер карточки: #{card.card_number}</b>\n"
             f"<b>{card.name}</b>\n\n"
             f"Описание: {card.description}\n\n"
-            f"Ссылка на карточку: <a href={share_link}>Ссылка</a>"
+            f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
         )
 
         image, keyboard = await create_card_images_inline(
