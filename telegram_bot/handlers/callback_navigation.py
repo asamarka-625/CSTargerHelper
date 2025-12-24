@@ -37,7 +37,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         page = int(nav)
 
         data["text"], data["keyboard"] = await create_maps_inline(
-            offset=(page - page_up) * cfg.LIMIT_VIEW_PAGE,
+            offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE,
             admin=admin
         )
 
@@ -54,7 +54,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
 
         data["text"], data["keyboard"] = await create_categories_inline(
             map_id=map_id,
-            offset=(page - page_down) * cfg.LIMIT_VIEW_PAGE,
+            offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE,
             admin=admin
         )
 
@@ -65,7 +65,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         data["text"], data["keyboard"] = await create_cards_inline(
             map_id=map_id,
             category_id=category_id,
-            offset=(page - page_down) * cfg.LIMIT_VIEW_PAGE
+            offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE
         )
 
     else:
