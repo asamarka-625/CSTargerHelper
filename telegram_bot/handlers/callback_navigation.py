@@ -22,7 +22,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         page_up = -1
     else:
         nav = callback_query.data.replace("next ", "")
-        page_down = 1
+        page_up = 1
 
     data = {}
     if nav.startswith("map"):
@@ -37,7 +37,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         page = int(nav)
 
         data["text"], data["keyboard"] = await create_maps_inline(
-            offset=(page - page_down) * cfg.LIMIT_VIEW_PAGE,
+            offset=(page - page_up) * cfg.LIMIT_VIEW_PAGE,
             admin=admin
         )
 
