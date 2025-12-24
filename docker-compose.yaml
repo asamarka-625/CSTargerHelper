@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.web
     ports:
-      - "8000:8000"
+      - "8080:8000"
     environment:
       - DATABASE_URL=postgresql+asyncpg://maks:maks123@db:5432/cs
     depends_on:
