@@ -29,6 +29,8 @@ async def get_map_callback_run(callback_query: CallbackQuery):
         text_answer = "Выберите карту"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка просмотра карт"
 
     await callback_query.answer(
