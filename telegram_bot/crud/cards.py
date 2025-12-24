@@ -35,7 +35,7 @@ async def sql_get_cards_by_category(
         raise
 
 
-# Выводим карточку
+# Выводим карточку по id
 @connection
 async def sql_get_card_by_id(card_id: int, session: AsyncSession) -> Card:
     try:
@@ -63,6 +63,34 @@ async def sql_get_card_by_id(card_id: int, session: AsyncSession) -> Card:
         raise
 
 
+# Выводим карточку по card_number
+@connection
+async def sql_get_card_by_number(card_number: str, session: AsyncSession) -> Card:
+    try:
+        card_result = await session.execute(
+            sa.select(Card)
+            .where(Card.card_number == card_number)
+            .options(
+                so.selectinload(Card.images)
+            )
+        )
+        card = card_result.scalar()
+
+        return card
+
+    except NoResultFound:
+        cfg.logger.info(f"Card not found by card_number = {card_number}")
+        raise
+
+    except SQLAlchemyError as e:
+        cfg.logger.error(f"Database error reading card by card_number = {card_number}: {e}")
+        raise
+
+    except Exception as e:
+        cfg.logger.error(f"Unexpected error reading card by card_number = {card_number}: {e}")
+        raise
+
+
 # Добавляем новую карточку
 @connection
 async def sql_add_card(
@@ -70,6 +98,7 @@ async def sql_add_card(
     description: str,
     category_id: int,
     custom: bool,
+    map_id: int,
     session: AsyncSession
 ) -> int:
     try:
@@ -77,7 +106,8 @@ async def sql_add_card(
             name=name.lower(),
             description=description,
             category_id=category_id,
-            custom=custom
+            custom=custom,
+            map_id=map_id
         )
         session.add(new_card)
         await session.commit()

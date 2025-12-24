@@ -45,11 +45,11 @@ async def admin_add_category_callback_run(callback_query: CallbackQuery, state: 
 # Колбэк выбора карты для добавления категории
 @router.callback_query(
     AddCategory.state_map,
-    F.data.startswith("admin_map:"),
+    F.data.startswith("map-admin:"),
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
 async def admin_add_category_choice_map_callback_run(callback_query: CallbackQuery, state: FSMContext):
-    map_id = int(callback_query.data.replace("admin_map:", ""))
+    map_id = int(callback_query.data.replace("map-admin:", ""))
     await state.update_data(map_id=map_id)
 
     try:

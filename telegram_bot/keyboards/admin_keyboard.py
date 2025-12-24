@@ -1,7 +1,6 @@
 # Внешние зависимости
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-# Внутренние модули
 
 
 # Создаем инлайн кнопки (админ меню)

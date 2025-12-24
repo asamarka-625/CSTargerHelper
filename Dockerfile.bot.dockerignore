@@ -12,9 +12,20 @@ __pycache__/
 .idea/
 
 # Докер
-Dockerfile
+Dockerfile.bot
+Dockerfile.web
 docker-compose.yml
 .dockerignore
 
 # Git
 .git
+.gitignore
+.gitkeep
+
+# README
+.md
+
+# Web
+web_app
+parser.py
+web.env

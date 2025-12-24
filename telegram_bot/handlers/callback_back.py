@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery
 # Внутренние модули
 from aiogram.filters import StateFilter
 from telegram_bot.keyboards import (create_main_inline, create_maps_inline, create_categories_inline,
-                                    create_cards_inline)
+                                        create_cards_inline)
 from telegram_bot.utils import edit_message
 from telegram_bot.core import cfg
 from telegram_bot.crud import sql_get_map_image

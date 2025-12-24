@@ -1,11 +1,14 @@
 # Внешние зависимости
-from aiogram import Router, F
+import urllib.parse
+from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
+from aiogram.utils.deep_linking import create_start_link
 # Внутренние модули
 from telegram_bot.keyboards import (create_maps_inline, create_categories_inline, create_cards_inline,
-                                    create_card_images_inline)
+                                        create_card_images_inline)
 from telegram_bot.utils import edit_message
-from telegram_bot.crud import sql_get_card_by_id, sql_get_map_image
+from telegram_bot.crud import (sql_get_card_by_id, sql_get_map_image, sql_chek_favorite_card_for_user,
+                               sql_update_favorite_card_for_user)
 from telegram_bot.core import cfg
 
 
@@ -87,23 +90,45 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
 
 # Колбэк выбора карточки
 @router.callback_query(F.data.startswith("card:"))
-async def choice_card_callback_run(callback_query: CallbackQuery):
+async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
     map_category_card_id = callback_query.data.replace("card:", "")
     map_id, category_id, card_id = map(int, map_category_card_id.split(":"))
 
     try:
         card = await sql_get_card_by_id(card_id=card_id)
+        user_favorite = await sql_chek_favorite_card_for_user(
+            telegram_id=callback_query.from_user.id,
+            card_id=card_id
+        )
+
+        deeplink = await create_start_link(
+            bot=bot,
+            payload=card.card_number,
+            encode=False
+        )
+
+        encoded_text = urllib.parse.quote(
+            f"<b>Номер карточки: #{card.card_number}</b>\n"
+            f"<b>{card.name}</b>\n\n"
+            f"Описание: {card.description}"
+        )
+        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
+
+        text = (
+            f"<b>Номер карточки: #{card.card_number}</b>\n"
+            f"<b>{card.name}</b>\n\n"
+            f"Описание: {card.description}\n\n"
+            f"Ссылка на карточку: <a href={share_link}>Ссылка</a>"
+        )
+
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
             category_id=category_id,
             card_id=card_id,
             order=len(card.images),
-            images=card.images
-        )
-
-        text = (
-            f"<b>{card.name}</b>\n\n"
-            f"Описание: {card.description}"
+            user_favorite=int(user_favorite),
+            images=card.images,
+            share_link=share_link
         )
 
         await edit_message(
@@ -125,20 +150,33 @@ async def choice_card_callback_run(callback_query: CallbackQuery):
 
 # Колбэк навигации по карточке
 @router.callback_query(F.data.startswith("image:"))
-async def navigation_card_callback_run(callback_query: CallbackQuery):
-    map_category_card_image_order_id = callback_query.data.replace("image:", "")
-    map_id, category_id, card_id, max_image, order = map(int, map_category_card_image_order_id.split(":"))
+async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
+    favorite_map_category_card_image_order_id = callback_query.data.replace("image:", "")
+    favorite, map_id, category_id, card_id, max_image, order = \
+        map(int, favorite_map_category_card_image_order_id.split(":"))
 
     try:
         if order > max_image:
             order = 1
+
+        card_number = callback_query.message.caption.split("\n")[0].replace("Номер карточки: #", "").strip()
+        deeplink = await create_start_link(
+            bot=bot,
+            payload=card_number,
+            encode=False
+        )
+
+        encoded_text = urllib.parse.quote(callback_query.message.caption)
+        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
 
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
             category_id=category_id,
             card_id=card_id,
             order=order,
-            max_image=max_image
+            user_favorite=favorite,
+            max_image=max_image,
+            share_link=share_link
         )
 
         if "- Изображение " in callback_query.message.caption:
@@ -159,6 +197,60 @@ async def navigation_card_callback_run(callback_query: CallbackQuery):
 
     except:
         text_answer = "Ошибка навигации по карточке"
+
+    await callback_query.answer(
+        text=text_answer,
+        show_alert=False
+    )
+
+
+# Колбэк добавления/удаления из избранного
+@router.callback_query(F.data.startswith("favorite:"))
+async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
+    favorite_map_category_card_image_order_id = callback_query.data.replace("favorite:", "")
+    favorite, map_id, category_id, card_id, max_image, order = \
+        map(int, favorite_map_category_card_image_order_id.split(":"))
+
+    try:
+        await sql_update_favorite_card_for_user(
+            telegram_id=callback_query.from_user.id,
+            card_id=card_id,
+            favorite=bool(favorite)
+        )
+
+        card_number = callback_query.message.caption.split("\n")[0].replace("Номер карточки: #", "").strip()
+        deeplink = await create_start_link(
+            bot=bot,
+            payload=card_number,
+            encode=False
+        )
+
+        encoded_text = urllib.parse.quote(callback_query.message.caption)
+        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
+
+        _, keyboard = await create_card_images_inline(
+            map_id=map_id,
+            category_id=category_id,
+            card_id=card_id,
+            order=order,
+            user_favorite=int(not favorite),
+            max_image=max_image,
+            share_link=share_link
+        )
+
+        await edit_message(
+            message=callback_query.message,
+            keyboard=keyboard
+        )
+
+        if favorite:
+            text_answer = "Удалено из избранного"
+
+        else:
+            text_answer = "Успешно добавлено в избранное"
+
+    except:
+        text_answer = "Ошибка изменения избранного"
 
     await callback_query.answer(
         text=text_answer,

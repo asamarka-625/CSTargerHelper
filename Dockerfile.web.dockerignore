@@ -1,0 +1,31 @@
+# Файлы Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Файлы venv
+.venv/
+
+# Файлы IDE
+.idea/
+
+# Докер
+Dockerfile.web
+Dockerfile.bot
+docker-compose.yml
+.dockerignore
+
+# Git
+.git
+.gitignore
+.gitkeep
+
+# README
+.md
+
+# Bot
+telegram_bot
+run_bot.py
+bot.env

@@ -124,4 +124,63 @@ async def sql_update_and_get_stats_user(
         cfg.logger.error(f"Unexpected error update and get stats user by telegram_id = {telegram_id}: {e}")
         raise
         
-   
+
+# Проверяем, есть находится ли карточка в избранном у пользователя
+@connection
+async def sql_chek_favorite_card_for_user(
+    telegram_id: int,
+    card_id: int,
+    session: AsyncSession
+) -> bool:
+    stmt = sa.select(
+        sa.exists(
+            sa.select(UserFavorite).join(
+                User, User.id == UserFavorite.user_id
+            ).where(
+                User.telegram_id == telegram_id,
+                UserFavorite.card_id == card_id
+            )
+        )
+    )
+
+    result = await session.execute(stmt)
+    return bool(result.scalar_one())
+
+
+# Добавляем/удаляем карточку в избранном у пользователя
+@connection
+async def sql_update_favorite_card_for_user(
+    telegram_id: int,
+    card_id: int,
+    favorite: bool,
+    session: AsyncSession
+) -> None:
+    # Получаем user_id
+    user_stmt = sa.select(User.id).where(User.telegram_id == telegram_id)
+    user_result = await session.execute(user_stmt)
+    user = user_result.scalar_one_or_none()
+
+    if not user:
+        raise ValueError(f"Пользователь с telegram_id={telegram_id} не найден")
+
+    user_id = user
+
+    if favorite:
+        # Используем UPSERT для добавления (игнорируем конфликты)
+        insert_stmt = insert(UserFavorite).values(
+            user_id=user_id,
+            card_id=card_id
+        ).on_conflict_do_nothing(
+            constraint='uq_user_favorite'
+        )
+        await session.execute(insert_stmt)
+
+    else:
+        # Удаляем из избранного
+        delete_stmt = sa.delete(UserFavorite).where(
+            UserFavorite.user_id == user_id,
+            UserFavorite.card_id == card_id
+        )
+        await session.execute(delete_stmt)
+
+    await session.commit()

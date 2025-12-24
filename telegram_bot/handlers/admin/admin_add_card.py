@@ -51,11 +51,11 @@ async def admin_add_card_callback_run(callback_query: CallbackQuery, state: FSMC
 # Колбэк выбора карты для добавления карточки
 @router.callback_query(
     AddCard.state_map,
-    F.data.startswith("admin_map:"),
+    F.data.startswith("map-admin:"),
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
 async def admin_add_card_choice_map_callback_run(callback_query: CallbackQuery, state: FSMContext):
-    map_id = int(callback_query.data.replace("admin_map:", ""))
+    map_id = int(callback_query.data.replace("map-admin:", ""))
 
     try:
         text, keyboard = await create_categories_inline(map_id=map_id, admin=True)
@@ -80,14 +80,17 @@ async def admin_add_card_choice_map_callback_run(callback_query: CallbackQuery, 
 # Колбэк выбора категории для добавления карточки
 @router.callback_query(
     AddCard.state_category,
-    F.data.startswith("admin_category:"),
+    F.data.startswith("category-admin:"),
     F.from_user.id.in_(cfg.ADMIN_IDS)
 )
 async def admin_add_card_choice_category_callback_run(callback_query: CallbackQuery, state: FSMContext):
-    map_category_id = callback_query.data.replace("admin_category:", "")
-    _, category_id = map(int, map_category_id.split(":"))
+    map_category_id = callback_query.data.replace("category-admin:", "")
+    map_id, category_id = map(int, map_category_id.split(":"))
 
-    await state.update_data(category_id=category_id)
+    await state.update_data(
+        category_id=category_id,
+        map_id=map_id
+    )
 
     try:
         await edit_message(
@@ -150,7 +153,8 @@ async def add_card_images(
         name=data["name"],
         description=data["description"],
         category_id=data["category_id"],
-        custom=False
+        custom=False,
+        map_id=data["map_id"]
     )
 
     card_images = {

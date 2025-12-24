@@ -144,7 +144,12 @@ class Card(Base):
         nullable=False,
         default=0
     )
-    
+    map_id: so.Mapped[int] = so.mapped_column(
+        sa.Integer,
+        nullable=False,
+        index=True
+    )
+
     # Внешние ключи
     category_id: so.Mapped[int] = so.mapped_column(
         sa.Integer,
@@ -247,14 +252,13 @@ class User(Base):
         return f"<User(id={self.id}, telegram_id='{self.telegram_id}', telegram_username='{self.telegram_username}')>"
 
     def __str__(self):
-        return self.telegram_id
+        return f"{self.telegram_id} ({self.telegram_username})"
 
 
 @event.listens_for(Card, 'before_insert')
 def generate_temp_card_number_before_insert(mapper, connection, target):
     """Генерирует временный уникальный card_number перед вставкой"""
     if target.card_number is None:
-        # Генерируем временное отрицательное число на основе UUID
         target.card_number = f"-{str(uuid.uuid4())}"
 
 

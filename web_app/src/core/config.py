@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 import os
 import logging
 # Внутренние модули
-from telegram_bot.core.logger import setup_logger
+from web_app.src.core.logger import setup_logger
 
 
-load_dotenv(dotenv_path="bot.env")
+load_dotenv(dotenv_path="web.env")
 
 
 @dataclass
@@ -15,18 +15,12 @@ class Config:
     _database_url: str = field(default_factory=lambda: os.getenv("DATABASE_URL"))
     logger: logging.Logger = field(init=False)
 
-    TELEGRAM_BOT_TOKEN: str = field(default_factory=lambda: os.getenv("TELEGRAM_BOT_TOKEN"))
+    SECRET_KEY: str = field(default_factory=lambda: os.getenv("SECRET_KEY"))
+    ALGORITHM: str = field(default_factory=lambda: os.getenv("ALGORITHM"))
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = field(default_factory=lambda: int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
 
-    MAIN_USER_TEXT: str = field(init=False)
-    MAIN_ADMIN_TEXT: str = field(init=False)
-    IMAGES_DIR: str = field(default_factory=lambda: os.getenv("IMAGES_DIR"))
-    MAIN_USER_PHOTO: str = field(default_factory=lambda: os.getenv("MAIN_USER_PHOTO"))
-    MAIN_ADMIN_PHOTO: str = field(default_factory=lambda: os.getenv("MAIN_ADMIN_PHOTO"))
-    ADMIN_IDS: tuple = field(
-        default_factory=lambda: tuple(int(admin_id.strip()) for admin_id in os.getenv("ADMIN_IDS").split(","))
-    )
-
-    LIMIT_VIEW_PAGE: int = field(init=False)
+    ADMIN_LOGIN: str = field(default_factory=lambda: os.getenv("ADMIN_LOGIN"))
+    ADMIN_PASSWORD: str = field(default_factory=lambda: os.getenv("ADMIN_PASSWORD"))
 
     def __post_init__(self):
         self.logger = setup_logger(
@@ -34,11 +28,6 @@ class Config:
             log_dir=os.getenv("LOG_DIR", "logs"),
             log_file=os.getenv("LOG_FILE", "web_log")
         )
-
-        self.MAIN_USER_TEXT: str = "Добро пожаловать!"
-        self.MAIN_ADMIN_TEXT: str = "Добро пожаловать, Админ!"
-
-        self.LIMIT_VIEW_PAGE: int = 8
 
         self.validate()
         self.logger.info("Configuration initialized")

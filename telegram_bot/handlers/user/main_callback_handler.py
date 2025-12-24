@@ -1,13 +1,40 @@
 # Внешние зависимости
 from aiogram import Router, F
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message, FSInputFile
+from aiogram.filters.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
 # Внутренние модули
-from telegram_bot.keyboards import create_profile_inline
+from telegram_bot.keyboards import (create_profile_inline, create_back_inline, create_main_menu_inline,
+                                        create_main_inline, create_card_images_inline)
 from telegram_bot.utils import edit_message, create_short_hash
-from telegram_bot.crud import sql_get_user_info, sql_update_and_get_stats_user
+from telegram_bot.crud import (sql_get_user_info, sql_update_and_get_stats_user, sql_get_card_by_number,
+                                   sql_chek_favorite_card_for_user)
+from telegram_bot.core import cfg
+
+
+# Состояние для поиска карточки
+class SearchMap(StatesGroup):
+    search = State()
 
 
 router = Router()
+
+
+# Колбэк перехода в главное меню
+@router.callback_query(F.data == "main")
+async def redirect_main_callback_run(callback_query: CallbackQuery, state: FSMContext):
+    await state.clear()
+
+    await callback_query.message.answer_photo(
+        photo=FSInputFile(f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"),
+        caption=cfg.MAIN_USER_TEXT,
+        reply_markup=create_main_inline(user_id=callback_query.from_user.id)
+    )
+
+    await callback_query.answer(
+        text="Главное меню",
+        show_alert=False
+    )
 
 
 # Колбэк получения профиля
@@ -61,7 +88,7 @@ async def update_profile_callback_run(callback_query: CallbackQuery):
             keyboard = create_profile_inline(hash_user_data=new_user_hash)
             
             text = f"""
-            username: {user_data[0]}\n
+            username: @{user_data[0]}\n
             name: {user_data[1]}\n
             last_name: {user_data[2]}\n
             Кол-во созданных карточек: {user_data[3]}\n
@@ -82,4 +109,74 @@ async def update_profile_callback_run(callback_query: CallbackQuery):
     await callback_query.answer(
         text=text_answer,
         show_alert=False
+    )
+
+
+# Колбэк поиска карточки
+@router.callback_query(F.data == "search")
+async def search_card_callback_run(callback_query: CallbackQuery, state: FSMContext):
+    try:
+        keyboard = await create_back_inline("main")
+
+        await edit_message(
+            message=callback_query.message,
+            text="Напишите номер карточки, которую нужно найти",
+            keyboard=keyboard
+        )
+
+        text_answer = "Напишите номер карточки"
+        await state.set_state(SearchMap.search)
+
+    except:
+        text_answer = "Ошибка поиска карточки"
+
+    await callback_query.answer(
+        text=text_answer,
+        show_alert=False
+    )
+
+
+# Поиск карточки
+@router.message(SearchMap.search)
+async def search_card(message: Message, state: FSMContext):
+    card_number = message.text.replace("#", "").strip()
+    card = await sql_get_card_by_number(card_number=card_number)
+
+    try:
+        if card:
+            user_favorite = await sql_chek_favorite_card_for_user(
+                telegram_id=message.from_user.id,
+                card_id=card.id
+            )
+
+            image, keyboard = await create_card_images_inline(
+                map_id=card.map_id,
+                category_id=card.category_id,
+                card_id=card.id,
+                order=len(card.images),
+                user_favorite=user_favorite,
+                images=card.images
+            )
+
+            text = (
+                f"<b>Номер карточки: {card.card_number}</b>\n"
+                f"<b>{card.name}</b>\n\n"
+                f"Описание: {card.description}"
+            )
+
+            await message.answer_photo(
+                photo=FSInputFile(f"{cfg.IMAGES_DIR}/cards/{image}"),
+                caption=text,
+                reply_markup=keyboard,
+            )
+
+            await state.clear()
+            return
+
+    except:
+        pass
+
+    await message.answer(
+        text="Ничего не найдено, проверьте верность введенного кода и попробуйте еще раз",
+        reply_markup=await create_main_menu_inline()
     )

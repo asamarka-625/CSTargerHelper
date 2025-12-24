@@ -147,3 +147,37 @@ FROM maps]
 2025-12-19 14:00:03,021 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [отправлен объект]
 2025-12-19 14:00:07,961 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
 2025-12-19 14:00:10,415 - telegram_bot.core.logger - INFO - Received CALLBACK from [1066713302]: [maps]
+2025-12-24 12:02:26,186 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:02:29,061 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:02:31,957 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:02:35,038 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:04:16,524 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:04:19,625 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:04:22,441 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:04:25,538 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:06:16,073 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:06:18,313 - telegram_bot.core.logger - INFO - Инициализируем приложение...
+2025-12-24 12:06:18,313 - telegram_bot.core.logger - INFO - Инициализируем базу данных
+2025-12-24 12:06:18,314 - telegram_bot.core.logger - INFO - Инициализируем таблицы
+2025-12-24 12:06:18,372 - telegram_bot.core.logger - INFO - Инициализируем middlewares
+2025-12-24 12:06:18,372 - telegram_bot.core.logger - INFO - Инициализируем handlers
+2025-12-24 12:11:27,732 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:11:46,219 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:13:19,198 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:20:48,236 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:20:50,410 - telegram_bot.core.logger - INFO - Инициализируем приложение...
+2025-12-24 12:20:50,410 - telegram_bot.core.logger - INFO - Инициализируем базу данных
+2025-12-24 12:20:50,410 - telegram_bot.core.logger - INFO - Инициализируем таблицы
+2025-12-24 12:20:50,460 - telegram_bot.core.logger - INFO - Инициализируем middlewares
+2025-12-24 12:20:50,461 - telegram_bot.core.logger - INFO - Инициализируем handlers
+2025-12-24 12:20:55,288 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:22:03,791 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:22:53,150 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:22:53,153 - telegram_bot.core.logger - INFO - Received MESSAGE from [1066713302]: [/start]
+2025-12-24 12:23:12,706 - telegram_bot.core.logger - INFO - Received CALLBACK from [1066713302]: [maps]
+2025-12-24 12:25:21,059 - telegram_bot.core.logger - INFO - Configuration initialized
+2025-12-24 12:25:23,261 - telegram_bot.core.logger - INFO - Инициализируем приложение...
+2025-12-24 12:25:23,261 - telegram_bot.core.logger - INFO - Инициализируем базу данных
+2025-12-24 12:25:23,261 - telegram_bot.core.logger - INFO - Инициализируем таблицы
+2025-12-24 12:25:23,311 - telegram_bot.core.logger - INFO - Инициализируем middlewares
+2025-12-24 12:25:23,311 - telegram_bot.core.logger - INFO - Инициализируем handlers

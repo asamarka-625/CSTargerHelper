@@ -21,21 +21,22 @@ def create_page(
     builder = InlineKeyboardBuilder()
 
     for i in range(0, len(obj), 2):
+        id_num = i + offset
         if (i + 1) < len(obj):
             builder.row(
                 InlineKeyboardButton(
-                    text=obj[i][1].upper(),
+                    text=f"{id_num}) {obj[i][1].upper()}",
                     callback_data=f"{tag}:{obj[i][0]}"
                 ),
                 InlineKeyboardButton(
-                    text=obj[i + 1][1].upper(),
+                    text=f"{id_num+1}) {obj[i+1][1].upper()}",
                     callback_data=f"{tag}:{obj[i + 1][0]}"
                 ),
             )
         else:
             builder.row(
                 InlineKeyboardButton(
-                    text=obj[i][1].upper(),
+                    text=f"{id_num}) {obj[i][1].upper()}",
                     callback_data=f"{tag}:{obj[i][0]}"
                 )
             )
@@ -63,6 +64,28 @@ def create_page(
     return builder
 
 
+# Вспомогательная функция для создания текста на странице
+def create_text_on_page(
+    obj: Sequence,
+    offset: int,
+    text_for_exists: str,
+    text_for_no_exists: str
+) -> str:
+    text = f"{text_for_exists}\n\n"
+    if obj:
+        for i in range(0, len(obj), 2):
+            id_num = i + offset
+            if (i + 1) < len(obj):
+                text += f"{id_num}) {obj[i][1].upper()}           {id_num+1}) {obj[i+1][1].upper()}\n"
+            else:
+                text += f"{id_num}) {obj[i][1].upper()}"
+
+        return text
+
+    else:
+        return text_for_no_exists
+
+
 # Создаем инлайн кнопки (главное меню)
 def create_main_inline(user_id: int):
     builder = InlineKeyboardBuilder()
@@ -71,7 +94,10 @@ def create_main_inline(user_id: int):
         InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_maps"),
         InlineKeyboardButton(text="❤️ Избранное", callback_data="favorites")
     )
-    builder.row(InlineKeyboardButton(text="👤 Профиль", callback_data="profile"))
+    builder.row(
+        InlineKeyboardButton(text="🔎 Поиск карточки", callback_data="search"),
+        InlineKeyboardButton(text="👤 Профиль", callback_data="profile")
+    )
 
     if user_id in cfg.ADMIN_IDS:
         builder.row(InlineKeyboardButton(text="👑 Админ", callback_data="admin"))
@@ -103,11 +129,13 @@ async def create_maps_inline(
         tag = "map-admin"
         back = "back admin"
 
-    if maps:
-        text = "Выберите карту из списка"
 
-    else:
-       text = "Нет доступных карт"
+    text = create_text_on_page(
+        obj=maps,
+        offset=offset,
+        text_for_exists="Выберите карту из списка",
+        text_for_no_exists="Нет доступных карт"
+    )
 
     builder = create_page(
         obj=maps,
@@ -140,11 +168,12 @@ async def create_categories_inline(
         tag = f"category-admin:{map_id}"
         back = "back admin"
 
-    if categories:
-        text = "Выберите категорию из списка"
-
-    else:
-        text = "Нет доступных категорий"
+    text = create_text_on_page(
+        obj=categories,
+        offset=offset,
+        text_for_exists="Выберите категорию из списка",
+        text_for_no_exists="Нет доступных категорий"
+    )
 
     builder = create_page(
         obj=categories,
@@ -169,11 +198,12 @@ async def create_cards_inline(
         offset=offset
     )
 
-    if cards:
-        text = "Выберите карточку из списка"
-
-    else:
-        text = "Нет доступных карточек"
+    text = create_text_on_page(
+        obj=cards,
+        offset=offset,
+        text_for_exists="Выберите карточку из списка",
+        text_for_no_exists="Нет доступных карточек"
+    )
 
     builder = create_page(
         obj=cards,
@@ -193,6 +223,8 @@ async def create_card_images_inline(
     category_id: int,
     card_id: int,
     order: int,
+    user_favorite: int,
+    share_link: str,
     max_image: Optional[int] = None,
     images: Optional[List[CardImage]] = None
 ):
@@ -210,22 +242,34 @@ async def create_card_images_inline(
         image = next((image for i, image in enumerate(images) if image.order == order), None)
         prev_image, next_image = False, order > 1
 
-    builder = InlineKeyboardBuilder()
+
     navigation = []
     if prev_image:
         navigation.append(InlineKeyboardButton(
             text="⬅️ Предыдущая",
-            callback_data=f"image:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
+            callback_data=f"image:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
         )
 
     if next_image:
         navigation.append(InlineKeyboardButton(
             text="Следующая ➡️",
-            callback_data=f"image:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
+            callback_data=f"image:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
         )
 
+    builder = InlineKeyboardBuilder()
     if navigation:
         builder.row(*navigation)
+
+    builder.row(
+        InlineKeyboardButton(
+            text="💔 Убрать из избранного" if user_favorite else "❤️ В избранное",
+            callback_data=f"favorite:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order}"
+        ),
+        InlineKeyboardButton(
+            text="↪ Поделиться",
+            url=share_link
+        )
+    )
 
     builder.row(InlineKeyboardButton(
         text="🔙 Назад",
@@ -233,3 +277,27 @@ async def create_card_images_inline(
     )
 
     return image.file_name, builder.as_markup()
+
+
+# Создаем инлайн кнопку назад
+async def create_back_inline(back: str):
+    builder = InlineKeyboardBuilder()
+
+    builder.row(InlineKeyboardButton(
+        text="🔙 Назад",
+        callback_data=f"back {back}")
+    )
+
+    return builder.as_markup()
+
+
+# Создаем инлайн кнопку главное меню
+async def create_main_menu_inline():
+    builder = InlineKeyboardBuilder()
+
+    builder.row(InlineKeyboardButton(
+        text="🔙 Главное меню",
+        callback_data="main")
+    )
+
+    return builder.as_markup()
