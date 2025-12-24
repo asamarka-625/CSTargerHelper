@@ -59,7 +59,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         )
 
     elif nav.startswith("card"):
-        map_category_page = nav.replace("category:", "")
+        map_category_page = nav.replace("card:", "")
         map_id, category_id, page = map(int, map_category_page.split(":"))
 
         data["text"], data["keyboard"] = await create_cards_inline(
