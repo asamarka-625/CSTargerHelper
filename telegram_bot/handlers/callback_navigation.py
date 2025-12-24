@@ -14,7 +14,7 @@ router = Router()
 # Колбэк кнопок навигации
 @router.callback_query(
     StateFilter('*'),
-    lambda: F.data.startswith("prev ") or F.data.startswith("next ")
+    F.data.startswith("prev ") | F.data.startswith("next ")
 )
 async def prev_next_callback_run(callback_query: CallbackQuery):
     if callback_query.data.startswith("prev "):

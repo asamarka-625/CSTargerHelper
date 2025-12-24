@@ -18,7 +18,7 @@ router = Router()
 async def back_callback_run(callback_query: CallbackQuery):
     back = callback_query.data.replace("back ", "")
     data = {}
-    cfg.logger.info(f"{back}")
+
     if back == "main":
         data["text"] = cfg.MAIN_USER_TEXT
         data["keyboard"] = create_main_inline(user_id=callback_query.from_user.id)
