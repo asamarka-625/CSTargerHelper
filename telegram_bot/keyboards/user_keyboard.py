@@ -1,5 +1,5 @@
 # Внешние зависимости
-from typing import Sequence, Optional, List
+from typing import Sequence, Optional, List, Tuple
 from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 # Внутренние модули
@@ -16,30 +16,38 @@ def create_page(
     next_page: bool,
     offset: int,
     tag: str,
-    back: str
-) -> InlineKeyboardBuilder:
+    back: str,
+    text_for_exists: str,
+    text_for_no_exists: str
+) -> Tuple[str, InlineKeyboardBuilder]:
     builder = InlineKeyboardBuilder()
+    text = f"{text_for_exists}\n\n"
 
-    for i in range(0, len(obj), 2):
-        id_num = i + offset + 1
-        if (i + 1) < len(obj):
-            builder.row(
-                InlineKeyboardButton(
-                    text=f"{id_num}) {obj[i][1].upper()}",
-                    callback_data=f"{tag}:{obj[i][0]}"
-                ),
-                InlineKeyboardButton(
-                    text=f"{id_num+1}) {obj[i+1][1].upper()}",
-                    callback_data=f"{tag}:{obj[i + 1][0]}"
-                ),
-            )
-        else:
-            builder.row(
-                InlineKeyboardButton(
-                    text=f"{id_num}) {obj[i][1].upper()}",
-                    callback_data=f"{tag}:{obj[i][0]}"
+    if obj:
+        for i in range(0, len(obj), 2):
+            id_num = i + offset + 1
+            if (i + 1) < len(obj):
+                text += f"{id_num}) {obj[i][1].upper()}           {id_num + 1}) {obj[i + 1][1].upper()}\n"
+                builder.row(
+                    InlineKeyboardButton(
+                        text=f"{id_num}) {obj[i][1].upper()}",
+                        callback_data=f"{tag}:{obj[i][0]}"
+                    ),
+                    InlineKeyboardButton(
+                        text=f"{id_num+1}) {obj[i+1][1].upper()}",
+                        callback_data=f"{tag}:{obj[i + 1][0]}"
+                    ),
                 )
-            )
+            else:
+                text += f"{id_num}) {obj[i][1].upper()}"
+                builder.row(
+                    InlineKeyboardButton(
+                        text=f"{id_num}) {obj[i][1].upper()}",
+                        callback_data=f"{tag}:{obj[i][0]}"
+                    )
+                )
+    else:
+        text = text_for_no_exists
 
     page = offset // cfg.LIMIT_VIEW_PAGE
     navigation = []
@@ -61,29 +69,7 @@ def create_page(
 
     builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data=f"back {back}"))
 
-    return builder
-
-
-# Вспомогательная функция для создания текста на странице
-def create_text_on_page(
-    obj: Sequence,
-    offset: int,
-    text_for_exists: str,
-    text_for_no_exists: str
-) -> str:
-    text = f"{text_for_exists}\n\n"
-    if obj:
-        for i in range(0, len(obj), 2):
-            id_num = i + offset
-            if (i + 1) < len(obj):
-                text += f"{id_num}) {obj[i][1].upper()}           {id_num+1}) {obj[i+1][1].upper()}\n"
-            else:
-                text += f"{id_num}) {obj[i][1].upper()}"
-
-        return text
-
-    else:
-        return text_for_no_exists
+    return text, builder
 
 
 # Создаем инлайн кнопки (главное меню)
@@ -129,21 +115,15 @@ async def create_maps_inline(
         tag = "map-admin"
         back = "admin"
 
-
-    text = create_text_on_page(
-        obj=maps,
-        offset=offset,
-        text_for_exists="Выберите карту из списка",
-        text_for_no_exists="Нет доступных карт"
-    )
-
-    builder = create_page(
+    text, builder = create_page(
         obj=maps,
         prev_page=prev_page,
         next_page=next_page,
         offset=offset,
         tag=tag,
-        back=back
+        back=back,
+        text_for_exists="Выберите карту из списка",
+        text_for_no_exists="Нет доступных карт"
     )
 
     return text, builder.as_markup()
@@ -168,20 +148,15 @@ async def create_categories_inline(
         tag = f"category-admin:{map_id}"
         back = "admin"
 
-    text = create_text_on_page(
-        obj=categories,
-        offset=offset,
-        text_for_exists="Выберите категорию из списка",
-        text_for_no_exists="Нет доступных категорий"
-    )
-
-    builder = create_page(
+    text, builder = create_page(
         obj=categories,
         prev_page=prev_page,
         next_page=next_page,
         offset=offset,
         tag=tag,
-        back=back
+        back=back,
+        text_for_exists="Выберите категорию из списка",
+        text_for_no_exists="Нет доступных категорий"
     )
 
     return text, builder.as_markup()
@@ -198,20 +173,15 @@ async def create_cards_inline(
         offset=offset
     )
 
-    text = create_text_on_page(
-        obj=cards,
-        offset=offset,
-        text_for_exists="Выберите карточку из списка",
-        text_for_no_exists="Нет доступных карточек"
-    )
-
-    builder = create_page(
+    text, builder = create_page(
         obj=cards,
         prev_page=prev_page,
         next_page=next_page,
         offset=offset,
         tag=f"card:{map_id}:{category_id}",
-        back=f"category:{map_id}"
+        back=f"category:{map_id}",
+        text_for_exists="Выберите карточку из списка",
+        text_for_no_exists="Нет доступных карточек"
     )
 
     return text, builder.as_markup()
