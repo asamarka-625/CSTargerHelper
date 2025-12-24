@@ -27,7 +27,6 @@ docker-compose.yml
 
 # Web
 web_app
-parser.py
 web.env
 
 # Nginx

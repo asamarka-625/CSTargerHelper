@@ -28,6 +28,7 @@ docker-compose.yml
 # Bot
 telegram_bot
 run_bot.py
+parser.py
 bot.env
 
 # Nginx
