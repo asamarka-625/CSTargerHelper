@@ -21,7 +21,7 @@ def create_page(
     builder = InlineKeyboardBuilder()
 
     for i in range(0, len(obj), 2):
-        id_num = i + offset
+        id_num = i + offset + 1
         if (i + 1) < len(obj):
             builder.row(
                 InlineKeyboardButton(
