@@ -178,7 +178,9 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             share_link=share_link
         )
 
-        cfg.logger.info(f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n")
+        cfg.logger.info(caption_split[2])
+        cfg.logger.info(caption_split[3])
+        cfg.logger.info(caption_split[4])
         caption = "\n".join(caption_split[4:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
