@@ -166,6 +166,7 @@ async def sql_update_favorite_card_for_user(
     user_id = user
 
     if favorite:
+        cfg.logger.info(f"favorite: {favorite}")
         # Используем UPSERT для добавления (игнорируем конфликты)
         insert_stmt = insert(UserFavorite).values(
             user_id=user_id,
