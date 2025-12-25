@@ -57,7 +57,7 @@ async def start_command(
                 category_id=card.category_id,
                 card_id=card.id,
                 order=len(card.images),
-                user_favorite=user_favorite,
+                user_favorite=int(user_favorite),
                 images=card.images,
                 share_link=share_link
             )
