@@ -216,7 +216,7 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             favorite=bool(favorite)
         )
 
-        card_number = callback_query.message.caption.split("\n")[0].replace("Номер карточки: #", "").strip()
+        card_number = callback_query.message.caption.split("\n")[2].replace("Номер карточки: #", "").strip()
         deeplink = await create_start_link(
             bot=bot,
             payload=card_number,
