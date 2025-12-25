@@ -107,14 +107,15 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             encode=False
         )
 
-        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
+        card_link = urllib.parse.quote(deeplink)
+        share_link = f"tg://msg_url?url={card_link}"
 
         text = (
             f"Изображение {len(card.images)}/{len(card.images)}\n\n"
             f"Номер карточки: <b>#{card.card_number}</b>\n"
-            f"<b>{card.name}</b>\n\n"
+            f"Название: <b>{card.name}</b>\n\n"
             f"Описание: {card.description}\n\n"
-            f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
+            f"Ссылка на карточку: <a href='{card_link}'>Ссылка</a>"
         )
 
         image, keyboard = await create_card_images_inline(
@@ -164,7 +165,8 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             encode=False
         )
 
-        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
+        card_link = urllib.parse.quote(deeplink)
+        share_link = f"tg://msg_url?url={card_link}"
 
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
@@ -180,9 +182,9 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text = (
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n\n"
-            f"Название: <b>{caption_split[3]}</b>\n"
+            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
             f"{caption}\n"
-            f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
+            f"Ссылка на карточку: <a href='{card_link}'>Ссылка</a>"
         )
 
         await edit_message(
