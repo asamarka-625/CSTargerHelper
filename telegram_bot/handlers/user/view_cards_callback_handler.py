@@ -107,12 +107,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             encode=False
         )
 
-        encoded_text = urllib.parse.quote(
-            f"<b>Номер карточки: #{card.card_number}</b>\n"
-            f"<b>{card.name}</b>\n\n"
-            f"Описание: {card.description}"
-        )
-        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
+        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
 
         text = (
             f"<b>Номер карточки: #{card.card_number}</b>\n"
@@ -140,8 +135,6 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text_answer = f"Карточка {card.name}"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка выбора карточки"
 
     await callback_query.answer(
@@ -168,8 +161,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             encode=False
         )
 
-        encoded_text = urllib.parse.quote(callback_query.message.caption)
-        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
+        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
 
         image, keyboard = await create_card_images_inline(
             map_id=map_id,
