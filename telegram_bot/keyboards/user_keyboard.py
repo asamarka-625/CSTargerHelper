@@ -236,7 +236,7 @@ async def create_card_images_inline(
             callback_data=f"favorite:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order}"
         ),
         InlineKeyboardButton(
-            text="↪ Поделиться",
+            text="↗️ Поделиться",
             url=share_link
         )
     )

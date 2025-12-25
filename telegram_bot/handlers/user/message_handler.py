@@ -24,6 +24,8 @@ async def start_command(message: Message, state: FSMContext, command: CommandObj
         telegram_last_name=message.from_user.last_name
     )
 
+    cfg.logger.info(f"{command.args}")
+
     card_number = None
     if command and command.args:
         try:

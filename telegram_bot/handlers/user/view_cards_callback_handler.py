@@ -216,7 +216,9 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             favorite=bool(favorite)
         )
 
-        card_number = callback_query.message.caption.split("\n")[2].replace("Номер карточки: #", "").strip()
+        caption_split = callback_query.message.caption.split("\n")
+
+        card_number = caption_split[2].replace("Номер карточки: #", "").strip()
         deeplink = await create_start_link(
             bot=bot,
             payload=card_number,
@@ -235,8 +237,14 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             share_link=share_link
         )
 
+        text = (
+            f"{'\n'.join(caption_split[4:-1])}"
+            f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
+        )
+
         await edit_message(
             message=callback_query.message,
+            text=text,
             keyboard=keyboard
         )
 
@@ -247,8 +255,6 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             text_answer = "Успешно добавлено в избранное"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка изменения избранного"
 
     await callback_query.answer(
