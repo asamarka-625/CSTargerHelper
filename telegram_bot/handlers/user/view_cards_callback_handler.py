@@ -155,6 +155,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             order = 1
 
         card_number = callback_query.message.caption.split("\n")[0].replace("Номер карточки: #", "").strip()
+        cfg.logger.info(card_number)
         deeplink = await create_start_link(
             bot=bot,
             payload=card_number,
