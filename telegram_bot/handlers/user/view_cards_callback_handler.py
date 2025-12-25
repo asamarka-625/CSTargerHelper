@@ -184,7 +184,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         caption = "\n".join(caption_split[4:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
-            f"Номер карточки: <b>#{card_number}</b>\n\n"
+            f"Номер карточки: <b>#{card_number}</b>\n"
             f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
             f"{caption}\n"
             f"Ссылка на карточку: <a href='{card_link}'>Ссылка</a>"
