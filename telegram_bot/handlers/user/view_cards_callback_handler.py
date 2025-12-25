@@ -109,6 +109,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
 
         card_link = urllib.parse.quote(deeplink)
         cfg.logger.info(card_link)
+        cfg.logger.info(deeplink)
         share_link = f"tg://msg_url?url={card_link}"
 
         text = (
@@ -226,8 +227,8 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             encode=False
         )
 
-        encoded_text = urllib.parse.quote(callback_query.message.caption)
-        share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}&text={encoded_text}"
+        card_link = urllib.parse.quote(deeplink)
+        share_link = f"tg://msg_url?url={card_link}"
 
         _, keyboard = await create_card_images_inline(
             map_id=map_id,
