@@ -198,6 +198,8 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text_answer = "Навигация по карточке"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка навигации по карточке"
 
     await callback_query.answer(
