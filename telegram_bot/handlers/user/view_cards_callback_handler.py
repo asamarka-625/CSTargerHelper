@@ -110,7 +110,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
 
         text = (
-            f"<b>Номер карточки: #{card.card_number}</b>\n"
+            f"Номер карточки: <b>#{card.card_number}</b>\n"
             f"<b>{card.name}</b>\n\n"
             f"Описание: {card.description}\n\n"
             f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
@@ -154,7 +154,9 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         if order > max_image:
             order = 1
 
-        card_number = callback_query.message.caption.split("\n")[2].replace("Номер карточки: #", "").strip()
+        caption_split = callback_query.message.caption.split("\n")
+
+        card_number = caption_split[2].replace("Номер карточки: #", "").strip()
         deeplink = await create_start_link(
             bot=bot,
             payload=card_number,
@@ -173,13 +175,14 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             share_link=share_link
         )
 
-        if "- Изображение " in callback_query.message.caption:
-            caption = "\n\n".join(callback_query.message.caption.split("\n\n")[1:])
-
-        else:
-            caption = callback_query.message.caption
-
-        text = f"- Изображение {order}/{max_image}\n\n{caption}"
+        caption = "\n".join(caption_split[4:-1])
+        text = (
+            f"- Изображение {order}/{max_image}\n\n"
+            f"Номер карточки: <b>#{card_number}</b>\n"
+            f"<b>{caption_split[3]}</b>\n"
+            f"{caption}"
+            f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
+        )
 
         await edit_message(
             message=callback_query.message,
