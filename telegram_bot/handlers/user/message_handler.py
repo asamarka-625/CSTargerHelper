@@ -1,8 +1,10 @@
 # Внешние зависимости
-from aiogram import Router
+import urllib.parse
+from aiogram import Router, Bot
 from aiogram.filters import StateFilter, CommandStart, CommandObject
 from aiogram.types import Message, FSInputFile
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.deep_linking import create_start_link
 # Внутренние модули
 from telegram_bot.keyboards import create_main_inline, create_card_images_inline
 from telegram_bot.core import cfg
@@ -14,7 +16,12 @@ router = Router()
 
 # Стартовая команда
 @router.message(StateFilter('*'), CommandStart())
-async def start_command(message: Message, state: FSMContext, command: CommandObject = None):
+async def start_command(
+    message: Message,
+    state: FSMContext,
+    bot: Bot,
+    command: CommandObject = None
+):
     await state.clear()
 
     await sql_add_or_update_user(
@@ -24,17 +31,9 @@ async def start_command(message: Message, state: FSMContext, command: CommandObj
         telegram_last_name=message.from_user.last_name
     )
 
-    cfg.logger.info(f"{command.args}")
-
     card_number = None
     if command and command.args:
-        try:
-            # Ожидаем формат: start?card=number
-            if "=" in command.args:
-                card_number = command.args.split("=")[1]
-
-        except:
-            pass
+        card_number = command.args
 
     if card_number is not None:
         card = await sql_get_card_by_number(card_number=card_number)
@@ -45,19 +44,30 @@ async def start_command(message: Message, state: FSMContext, command: CommandObj
                 card_id=card.id
             )
 
+            deeplink = await create_start_link(
+                bot=bot,
+                payload=card.card_number,
+                encode=False
+            )
+
+            share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
+
             image, keyboard = await create_card_images_inline(
                 map_id=card.map_id,
                 category_id=card.category_id,
                 card_id=card.id,
                 order=len(card.images),
                 user_favorite=user_favorite,
-                images=card.images
+                images=card.images,
+                share_link=share_link
             )
 
             text = (
-                f"<b>Номер карточки: {card.card_number}</b>\n"
-                f"<b>{card.name}</b>\n\n"
-                f"Описание: {card.description}"
+                f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
+                f"Номер карточки: <b>#{card.card_number}</b>\n"
+                f"Название: <b>{card.name}</b>\n\n"
+                f"Описание: {card.description}\n\n"
+                f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
             )
 
             await message.answer_photo(
