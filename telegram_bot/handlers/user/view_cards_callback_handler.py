@@ -108,10 +108,11 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         )
 
         card_link = urllib.parse.quote(deeplink)
+        cfg.logger.info(card_link)
         share_link = f"tg://msg_url?url={card_link}"
 
         text = (
-            f"Изображение {len(card.images)}/{len(card.images)}\n\n"
+            f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
             f"Номер карточки: <b>#{card.card_number}</b>\n"
             f"Название: <b>{card.name}</b>\n\n"
             f"Описание: {card.description}\n\n"
@@ -178,9 +179,6 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             share_link=share_link
         )
 
-        cfg.logger.info(caption_split[2])
-        cfg.logger.info(caption_split[3])
-        cfg.logger.info(caption_split[4])
         caption = "\n".join(caption_split[4:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
@@ -253,6 +251,8 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             text_answer = "Успешно добавлено в избранное"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка изменения избранного"
 
     await callback_query.answer(
