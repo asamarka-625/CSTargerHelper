@@ -110,6 +110,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
 
         text = (
+            f"Изображение {len(card.images)}/{len(card.images)}\n\n"
             f"Номер карточки: <b>#{card.card_number}</b>\n"
             f"<b>{card.name}</b>\n\n"
             f"Описание: {card.description}\n\n"
@@ -178,9 +179,9 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         caption = "\n".join(caption_split[4:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
-            f"Номер карточки: <b>#{card_number}</b>\n"
-            f"<b>{caption_split[3]}</b>\n"
-            f"{caption}"
+            f"Номер карточки: <b>#{card_number}</b>\n\n"
+            f"Название: <b>{caption_split[3]}</b>\n"
+            f"{caption}\n"
             f"Ссылка на карточку: <a href='{share_link}'>Ссылка</a>"
         )
 
