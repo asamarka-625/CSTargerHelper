@@ -154,8 +154,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         if order > max_image:
             order = 1
 
-        card_number = callback_query.message.caption.split("\n")[0].replace("Номер карточки: #", "").strip()
-        cfg.logger.info(card_number)
+        card_number = callback_query.message.caption.split("\n")[2].replace("Номер карточки: #", "").strip()
         deeplink = await create_start_link(
             bot=bot,
             payload=card_number,
@@ -191,8 +190,6 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text_answer = "Навигация по карточке"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка навигации по карточке"
 
     await callback_query.answer(
