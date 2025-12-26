@@ -237,13 +237,13 @@ async def create_card_images_inline(
     navigation = []
     if prev_image:
         navigation.append(InlineKeyboardButton(
-            text="⬅️ Предыдущая",
+            text="⬅️ Пред. Шаг",
             callback_data=f"image:{type_card}:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
         )
 
     if next_image:
         navigation.append(InlineKeyboardButton(
-            text="Следующая ➡️",
+            text="След. Шаг ➡️",
             callback_data=f"image:{type_card}:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
         )
 
