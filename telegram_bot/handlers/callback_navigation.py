@@ -34,8 +34,8 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
             admin = False
             nav = nav.replace("map:", "")
 
-        type_card, page = callback_query.data.replace("map:", "").split(":")
-        page = int(nav)
+        type_card, page = nav.split(":")
+        page = int(page)
 
         data["text"], data["keyboard"] = await create_maps_inline(
             type_card=type_card,

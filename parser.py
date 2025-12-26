@@ -14,7 +14,10 @@ category_name_with_visual = {
     "flash": "⚡ flash ⚡",
     "molotov": "🔥 molotov 🔥",
     "hegrenade": "💥 he-grenade 💥",
-    "oneway": "👀 oneway 👀"
+    "oneway": "👀 oneway 👀",
+    "reveal": "⭐ reveal ⭐",
+    "wallbang": "🔫 wallbang 🔫",
+    "insta": "🚀 insta 🚀"
 }
 
 errors = []
