@@ -63,12 +63,8 @@ class Parser:
         slides = soup.find_all("div", class_="multiphoto-box")
         main_text = soup.find("div", class_="breadcrumb-content text-center")
         description = main_text.find("span").text.strip()
-        custom_name_split = description.lower().replace("для cs2", "").lstrip(" от ")[1:]
+        custom_name_split = description.lower().replace("для cs2", "").split(" от ")[1:]
         custom_name = " ".join(custom_name_split).strip().upper()
-
-        print(custom_name_split)
-        print(custom_name)
-        raise ValueError("test")
 
         result = []
         steps = []
