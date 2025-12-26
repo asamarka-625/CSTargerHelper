@@ -22,6 +22,7 @@ async def sql_get_categories_by_map(
             .where(Category.map_id == map_id)
             .offset(offset)
             .limit(cfg.LIMIT_VIEW_PAGE + 1)
+            .order_by(Category.id)
         )
         categories = categories_result.all()
 

@@ -102,7 +102,7 @@ class Parser:
             print(f"(download) Unexpected error: {err}")
 
     async def run(self):
-        _, _, maps = await sql_get_all_maps()
+        _, _, maps = await sql_get_all_maps(offset=8)
 
         for m in maps:
             await asyncio.sleep(0.5)

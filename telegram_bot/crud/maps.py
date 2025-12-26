@@ -20,6 +20,7 @@ async def sql_get_all_maps(
             sa.select(Map.id, Map.name)
             .offset(offset)
             .limit(cfg.LIMIT_VIEW_PAGE + 1)
+            .order_by(Map.id)
         )
         maps = maps_result.all()
 

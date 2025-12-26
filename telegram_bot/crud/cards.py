@@ -45,6 +45,7 @@ async def sql_get_cards_by_category(
             query
             .offset(offset)
             .limit(cfg.LIMIT_VIEW_PAGE + 1)
+            .order_by(Card.id)
         )
         cards = cards_result.all()
 
