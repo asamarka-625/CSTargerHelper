@@ -17,6 +17,8 @@ category_name_with_visual = {
     "oneway": "👀 oneway 👀"
 }
 
+errors = []
+
 
 class Parser:
     url_base = "https://раскидки-гранат.рф/"
@@ -36,6 +38,7 @@ class Parser:
             print(f"Error fetching the URL: {err}")
 
         except Exception as err:
+            errors.append(f"Unexpected error: {err}")
             print(f"Unexpected error: {err}")
 
 
@@ -60,8 +63,12 @@ class Parser:
         slides = soup.find_all("div", class_="multiphoto-box")
         main_text = soup.find("div", class_="breadcrumb-content text-center")
         description = main_text.find("span").text.strip()
-        custom_name_split = description.lower().replace("для cs2", "").lstrip("от ")[1:]
+        custom_name_split = description.lower().replace("для cs2", "").lstrip(" от ")[1:]
         custom_name = " ".join(custom_name_split).strip().upper()
+
+        print(custom_name_split)
+        print(custom_name)
+        raise ValueError("test")
 
         result = []
         steps = []
@@ -88,9 +95,11 @@ class Parser:
             print(f"Изображение сохранено как {filename}")
 
         except requests.exceptions.RequestException as err:
+            errors.append(f"(download) Error fetching the URL: {err}")
             print(f"(download) Error fetching the URL: {err}")
 
         except Exception as err:
+            errors.append(f"(download) Unexpected error: {err}")
             print(f"(download) Unexpected error: {err}")
 
     async def run(self):
@@ -154,6 +163,10 @@ class Parser:
                         card_id=card_id,
                         **card_images
                     )
+
+        print("Ошибки:")
+        for error in errors:
+            print(error)
 
 
 if __name__ == "__main__":
