@@ -88,6 +88,8 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
         text_answer = "Выберите карточку"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка выбора категории"
 
     await callback_query.answer(
