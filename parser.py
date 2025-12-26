@@ -105,6 +105,7 @@ class Parser:
         _, _, maps = await sql_get_all_maps(offset=8)
 
         for m in maps:
+            input(f"Push any key for {m[1]}...")
             await asyncio.sleep(0.5)
 
             print(f"Карта: https://раскидки-гранат.рф/raskidki-granat-counter-strike-2/{m[1]}/")
