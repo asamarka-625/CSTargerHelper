@@ -123,7 +123,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
             f"Номер карточки: <b>#{card.card_number}</b>\n"
             f"Название: <b>{card.name}</b>\n\n"
-            f"Описание: {card.description}\n\n"
+            f"<code>Описание: {card.description}\n\n</code>"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
 
@@ -194,7 +194,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
             f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
-            f"{caption}\n"
+            f"<code>{caption}</code>\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
 
@@ -257,7 +257,7 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
             f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
-            f"{caption}\n"
+            f"<code>{caption}</code>\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
 
