@@ -41,7 +41,11 @@ async def sql_get_cards_by_category(
                 )
             )
 
-        cards_result = await session.execute(query)
+        cards_result = await session.execute(
+            query
+            .offset(offset)
+            .limit(cfg.LIMIT_VIEW_PAGE + 1)
+        )
         cards = cards_result.all()
 
         return offset > 0, len(cards) > (offset + cfg.LIMIT_VIEW_PAGE), cards[:cfg.LIMIT_VIEW_PAGE]

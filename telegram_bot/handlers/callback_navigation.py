@@ -68,7 +68,6 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         type_card = type_map_category_page[0]
         map_id, category_id, page = map(int, type_map_category_page[1:])
 
-        cfg.logger.info(f"card page_up: {page_up}, {page + page_up}")
         data["text"], data["keyboard"] = await create_cards_inline(
             telegram_id=callback_query.from_user.id,
             map_id=map_id,
