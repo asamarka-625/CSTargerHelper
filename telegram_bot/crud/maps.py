@@ -23,7 +23,7 @@ async def sql_get_all_maps(
         )
         maps = maps_result.all()
 
-        return offset > 0, len(maps) > (offset + cfg.LIMIT_VIEW_PAGE), maps[:cfg.LIMIT_VIEW_PAGE]
+        return offset > 0, len(maps) > cfg.LIMIT_VIEW_PAGE, maps[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all maps: {e}")

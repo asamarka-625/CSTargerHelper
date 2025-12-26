@@ -25,7 +25,7 @@ async def sql_get_categories_by_map(
         )
         categories = categories_result.all()
 
-        return offset > 0, len(categories) > (offset + cfg.LIMIT_VIEW_PAGE), categories[:cfg.LIMIT_VIEW_PAGE]
+        return offset > 0, len(categories) > cfg.LIMIT_VIEW_PAGE, categories[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all categories by map_id = {map_id}: {e}")

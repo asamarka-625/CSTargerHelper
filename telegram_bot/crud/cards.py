@@ -48,7 +48,7 @@ async def sql_get_cards_by_category(
         )
         cards = cards_result.all()
 
-        return offset > 0, len(cards) > (offset + cfg.LIMIT_VIEW_PAGE), cards[:cfg.LIMIT_VIEW_PAGE]
+        return offset > 0, len(cards) > cfg.LIMIT_VIEW_PAGE, cards[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
         cfg.logger.error(f"Database error reading all cards by category_id = {category_id} and type = {type_card}: {e}")
