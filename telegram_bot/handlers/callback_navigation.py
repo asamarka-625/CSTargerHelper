@@ -56,6 +56,7 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
         type_card = type_map_id_page[0]
         map_id, page = map(int, type_map_id_page[1:])
 
+        cfg.logger.info(f"card page_up: {page_up}, {page + page_up}")
         data["text"], data["keyboard"] = await create_categories_inline(
             map_id=map_id,
             type_card=type_card,
