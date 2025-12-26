@@ -24,7 +24,7 @@ async def back_callback_run(callback_query: CallbackQuery):
         data["keyboard"] = create_main_inline(user_id=callback_query.from_user.id)
         data["media"] = f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"
 
-    elif back == "map":
+    elif back.startswith("map:"):
         type_card = back.replace("map:", "")
         data["text"], data["keyboard"] = await create_maps_inline(type_card=type_card)
         data["media"] = f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"

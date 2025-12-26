@@ -252,8 +252,12 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             type_card=type_card
         )
 
+        caption = "\n".join(caption_split[4:-1])
         text = (
-            f"{'\n'.join(caption_split[4:-1])}"
+            f"- Изображение {order}/{max_image}\n\n"
+            f"Номер карточки: <b>#{card_number}</b>\n"
+            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
+            f"{caption}\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
 
