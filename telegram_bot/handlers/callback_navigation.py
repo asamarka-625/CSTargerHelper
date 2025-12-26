@@ -34,9 +34,11 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
             admin = False
             nav = nav.replace("map:", "")
 
+        type_card, page = callback_query.data.replace("map:", "").split(":")
         page = int(nav)
 
         data["text"], data["keyboard"] = await create_maps_inline(
+            type_card=type_card,
             offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE,
             admin=admin
         )
@@ -50,21 +52,27 @@ async def prev_next_callback_run(callback_query: CallbackQuery):
             admin = False
             nav = nav.replace("category:", "")
 
-        map_id, page = map(int, nav.split(":"))
+        type_map_id_page = nav.split(":")
+        type_card = type_map_id_page[0]
+        map_id, page = map(int, type_map_id_page[1:])
 
         data["text"], data["keyboard"] = await create_categories_inline(
             map_id=map_id,
+            type_card=type_card,
             offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE,
             admin=admin
         )
 
     elif nav.startswith("card"):
-        map_category_page = nav.replace("card:", "")
-        map_id, category_id, page = map(int, map_category_page.split(":"))
+        type_map_category_page = nav.replace("card:", "").split(":")
+        type_card = type_map_category_page[0]
+        map_id, category_id, page = map(int, type_map_category_page[1:])
 
         data["text"], data["keyboard"] = await create_cards_inline(
+            telegram_id=callback_query.from_user.id,
             map_id=map_id,
             category_id=category_id,
+            type_card=type_card,
             offset=(page + page_up) * cfg.LIMIT_VIEW_PAGE
         )
 

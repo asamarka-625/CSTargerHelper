@@ -270,6 +270,8 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             text_answer = "Успешно добавлено в избранное"
 
     except:
+        import traceback
+        traceback.print_exc()
         text_answer = "Ошибка изменения избранного"
 
     await callback_query.answer(
