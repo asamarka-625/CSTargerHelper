@@ -110,7 +110,7 @@ class Parser:
             )
             categories = self.get_name_and_link(content=content)
 
-            for category_name, category_link in categories[:1]:
+            for category_name, category_link in categories:
                 await asyncio.sleep(0.5)
 
                 category_id = await sql_add_category_for_map(
