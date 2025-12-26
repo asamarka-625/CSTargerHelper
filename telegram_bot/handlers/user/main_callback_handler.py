@@ -1,8 +1,10 @@
 # Внешние зависимости
-from aiogram import Router, F
+import urllib.parse
+from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery, Message, FSInputFile
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.deep_linking import create_start_link
 # Внутренние модули
 from telegram_bot.keyboards import (create_profile_inline, create_back_inline, create_main_menu_inline,
                                         create_main_inline, create_card_images_inline)
@@ -138,7 +140,7 @@ async def search_card_callback_run(callback_query: CallbackQuery, state: FSMCont
 
 # Поиск карточки
 @router.message(SearchMap.search)
-async def search_card(message: Message, state: FSMContext):
+async def search_card(message: Message, state: FSMContext, bot: Bot):
     card_number = message.text.replace("#", "").strip()
     card = await sql_get_card_by_number(card_number=card_number)
 
@@ -149,19 +151,30 @@ async def search_card(message: Message, state: FSMContext):
                 card_id=card.id
             )
 
+            deeplink = await create_start_link(
+                bot=bot,
+                payload=card.card_number,
+                encode=False
+            )
+
+            share_link = f"tg://msg_url?url={urllib.parse.quote(deeplink)}"
+
             image, keyboard = await create_card_images_inline(
                 map_id=card.map_id,
                 category_id=card.category_id,
                 card_id=card.id,
                 order=len(card.images),
-                user_favorite=user_favorite,
-                images=card.images
+                user_favorite=int(user_favorite),
+                images=card.images,
+                share_link=share_link
             )
 
             text = (
-                f"<b>Номер карточки: {card.card_number}</b>\n"
-                f"<b>{card.name}</b>\n\n"
-                f"Описание: {card.description}"
+                f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
+                f"Номер карточки: <b>#{card.card_number}</b>\n"
+                f"Название: <b>{card.name}</b>\n\n"
+                f"Описание: {card.description}\n\n"
+                f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
             )
 
             await message.answer_photo(
