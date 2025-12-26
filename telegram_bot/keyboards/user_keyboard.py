@@ -180,12 +180,14 @@ async def create_categories_inline(
 
 # Создаем инлайн кнопки (карточки для выбранной категории)
 async def create_cards_inline(
+    telegram_id: int,
     map_id: int,
     category_id: int,
     type_card: str = "g",
     offset: int = 0
 ):
     prev_page, next_page, cards = await sql_get_cards_by_category(
+        telegram_id=telegram_id,
         category_id=category_id,
         type_card=type_card,
         offset=offset

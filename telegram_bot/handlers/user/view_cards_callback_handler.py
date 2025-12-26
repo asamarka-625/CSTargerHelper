@@ -75,6 +75,7 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
 
     try:
         text, keyboard = await create_cards_inline(
+            telegram_id=callback_query.from_user.id,
             map_id=map_id,
             category_id=category_id,
             type_card=type_card
@@ -88,8 +89,6 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
         text_answer = "Выберите карточку"
 
     except:
-        import traceback
-        traceback.print_exc()
         text_answer = "Ошибка выбора категории"
 
     await callback_query.answer(
