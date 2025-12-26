@@ -55,11 +55,13 @@ class Parser:
 
 
     @classmethod
-    def get_image_and_step(cls, content: bytes) -> Tuple[str, List[str]]:
+    def get_image_and_step(cls, content: bytes) -> Tuple[str, str, List[str]]:
         soup = BeautifulSoup(content, "html.parser")
         slides = soup.find_all("div", class_="multiphoto-box")
         main_text = soup.find("div", class_="breadcrumb-content text-center")
         description = main_text.find("span").text.strip()
+        custom_name_split = description.lower().replace("для cs2", "").lstrip("от ")[1:]
+        custom_name = " ".join(custom_name_split).strip().upper()
 
         result = []
         steps = []
@@ -70,9 +72,9 @@ class Parser:
             image_link = f"{cls.url_base}{slide.find("img").get("src")}"
             result.append(image_link)
 
-        description += "\n\n".join(steps)
+        description = f"{description}\n\n{'\n\n'.join(steps)}"
 
-        return description, result
+        return custom_name, description, result
 
     def download_image(self, url_path: str, filename: str):
         try:
@@ -115,15 +117,15 @@ class Parser:
                 content = self.get_response(url_path=category_link)
                 cards = self.get_name_and_link(content=content)
 
-                for card_name, card_link in cards:
+                for _, card_link in cards:
                     await asyncio.sleep(0.5)
 
                     print(f"Карточка: {card_link}")
                     content = self.get_response(url_path=card_link)
-                    card_description, image_links = self.get_image_and_step(content=content)
+                    custom_name, card_description, image_links = self.get_image_and_step(content=content)
 
                     card_id = await sql_add_card(
-                        name=card_name,
+                        name=custom_name,
                         description=card_description,
                         category_id=category_id,
                         custom=False,
