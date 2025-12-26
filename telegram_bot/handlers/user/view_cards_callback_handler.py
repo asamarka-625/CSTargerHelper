@@ -189,7 +189,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             type_card=type_card
         )
 
-        caption = "\n".join(caption_split[4:-1])
+        caption = "\n".join(caption_split[5:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
@@ -252,7 +252,7 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             type_card=type_card
         )
 
-        caption = "\n".join(caption_split[4:-1])
+        caption = "\n".join(caption_split[5:-1])
         text = (
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
