@@ -75,10 +75,10 @@ def create_page(
 # Создаем инлайн кнопки (главное меню)
 def create_main_inline(user_id: int):
     builder = InlineKeyboardBuilder()
-    builder.row(InlineKeyboardButton(text="🎮 Карты", callback_data="maps"))
+    builder.row(InlineKeyboardButton(text="🎮 Карты", callback_data="maps:g"))
     builder.row(
-        InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_maps"),
-        InlineKeyboardButton(text="❤️ Избранное", callback_data="favorites")
+        InlineKeyboardButton(text="📚 Мои карточки", callback_data="my_cards"),
+        InlineKeyboardButton(text="❤️ Избранное", callback_data="maps:f")
     )
     builder.row(
         InlineKeyboardButton(text="🔎 Поиск карточки", callback_data="search"),
@@ -87,6 +87,16 @@ def create_main_inline(user_id: int):
 
     if user_id in cfg.ADMIN_IDS:
         builder.row(InlineKeyboardButton(text="👑 Админ", callback_data="admin"))
+
+    return builder.as_markup()
+
+
+# Создаем инлайн кнопки (мои карточки)
+def create_my_cards_inline():
+    builder = InlineKeyboardBuilder()
+    builder.row(InlineKeyboardButton(text="🔍 Посмотреть", callback_data="maps:m"))
+    builder.row(InlineKeyboardButton(text="➕ Создать (В разработке)", callback_data="create"))
+    builder.row(InlineKeyboardButton(text="🔙 Назад", callback_data="back main"))
 
     return builder.as_markup()
 
@@ -102,14 +112,19 @@ def create_profile_inline(hash_user_data: str):
 
 # Создаем инлайн кнопки (доступные карты)
 async def create_maps_inline(
+    type_card: str = "g",
     admin: bool = False,
     offset: int = 0
 ):
     prev_page, next_page, maps = await sql_get_all_maps(offset=offset)
 
     if not admin:
-        tag = "map"
-        back = "main"
+        tag = f"map:{type_card}"
+        if type_card == "m":
+            back = "my_cards"
+
+        else:
+            back = "main"
 
     else:
         tag = "map-admin"
@@ -132,6 +147,7 @@ async def create_maps_inline(
 # Создаем инлайн кнопки (категории для выбранной карты)
 async def create_categories_inline(
     map_id: int,
+    type_card: str = "g",
     admin: bool = False,
     offset: int = 0
 ):
@@ -141,8 +157,8 @@ async def create_categories_inline(
     )
 
     if not admin:
-        tag = f"category:{map_id}"
-        back = "map"
+        tag = f"category:{type_card}:{map_id}"
+        back = f"map:{type_card}"
 
     else:
         tag = f"category-admin:{map_id}"
@@ -166,10 +182,12 @@ async def create_categories_inline(
 async def create_cards_inline(
     map_id: int,
     category_id: int,
+    type_card: str = "g",
     offset: int = 0
 ):
     prev_page, next_page, cards = await sql_get_cards_by_category(
         category_id=category_id,
+        type_card=type_card,
         offset=offset
     )
 
@@ -178,8 +196,8 @@ async def create_cards_inline(
         prev_page=prev_page,
         next_page=next_page,
         offset=offset,
-        tag=f"card:{map_id}:{category_id}",
-        back=f"category:{map_id}",
+        tag=f"card:{type_card}:{map_id}:{category_id}",
+        back=f"category:{type_card}:{map_id}",
         text_for_exists="Выберите карточку из списка",
         text_for_no_exists="Нет доступных карточек"
     )
@@ -195,6 +213,7 @@ async def create_card_images_inline(
     order: int,
     user_favorite: int,
     share_link: str,
+    type_card: str = "g",
     max_image: Optional[int] = None,
     images: Optional[List[CardImage]] = None
 ):
@@ -217,13 +236,13 @@ async def create_card_images_inline(
     if prev_image:
         navigation.append(InlineKeyboardButton(
             text="⬅️ Предыдущая",
-            callback_data=f"image:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
+            callback_data=f"image:{type_card}:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order-1}")
         )
 
     if next_image:
         navigation.append(InlineKeyboardButton(
             text="Следующая ➡️",
-            callback_data=f"image:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
+            callback_data=f"image:{type_card}:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order+1}")
         )
 
     builder = InlineKeyboardBuilder()
@@ -233,7 +252,7 @@ async def create_card_images_inline(
     builder.row(
         InlineKeyboardButton(
             text="💔 Убрать из избранного" if user_favorite else "❤️ В избранное",
-            callback_data=f"favorite:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order}"
+            callback_data=f"favorite:{type_card}:{user_favorite}:{map_id}:{category_id}:{card_id}:{max_image}:{order}"
         ),
         InlineKeyboardButton(
             text="↗️ Поделиться",
@@ -243,7 +262,7 @@ async def create_card_images_inline(
 
     builder.row(InlineKeyboardButton(
         text="🔙 Назад",
-        callback_data=f"back cards:{map_id}:{category_id}")
+        callback_data=f"back cards:{type_card}:{map_id}:{category_id}")
     )
 
     return image.file_name, builder.as_markup()

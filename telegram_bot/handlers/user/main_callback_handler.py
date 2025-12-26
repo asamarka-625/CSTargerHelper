@@ -7,10 +7,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.deep_linking import create_start_link
 # Внутренние модули
 from telegram_bot.keyboards import (create_profile_inline, create_back_inline, create_main_menu_inline,
-                                        create_main_inline, create_card_images_inline)
+                                    create_main_inline, create_card_images_inline, create_my_cards_inline)
 from telegram_bot.utils import edit_message, create_short_hash
 from telegram_bot.crud import (sql_get_user_info, sql_update_and_get_stats_user, sql_get_card_by_number,
-                                   sql_chek_favorite_card_for_user)
+                               sql_chek_favorite_card_for_user)
 from telegram_bot.core import cfg
 
 
@@ -192,4 +192,47 @@ async def search_card(message: Message, state: FSMContext, bot: Bot):
     await message.answer(
         text="Ничего не найдено, проверьте верность введенного кода и попробуйте еще раз",
         reply_markup=await create_main_menu_inline()
+    )
+
+
+# Колбэк (мои карточки)
+@router.callback_query(F.data == "my_cards")
+async def my_cards_callback_run(callback_query: CallbackQuery):
+    try:
+        keyboard = create_my_cards_inline()
+
+        await edit_message(
+            message=callback_query.message,
+            text="Меню ваших карточек",
+            keyboard=keyboard
+        )
+
+        text_answer = "Меню ваших карточек"
+
+    except:
+        text_answer = "Ошибка меню 'мои карточки'"
+
+    await callback_query.answer(
+        text=text_answer,
+        show_alert=False
+    )
+
+
+# Колбэк создать карточку
+@router.callback_query(F.data == "create")
+async def create_card_callback_run(callback_query: CallbackQuery):
+    try:
+        await edit_message(
+            message=callback_query.message,
+            text="На данный момент находится в разработке",
+        )
+
+        text_answer = "На данный момент находится в разработке"
+
+    except:
+        text_answer = "Ошибка создании карточки"
+
+    await callback_query.answer(
+        text=text_answer,
+        show_alert=False
     )

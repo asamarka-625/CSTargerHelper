@@ -6,32 +6,52 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 # Внутренние модули
 from telegram_bot.core import cfg
-from models import Card, CardImage
+from models import Card, CardImage, User, UserFavorite
 from telegram_bot.core import connection
 
 
 # Выводим все карточки для категории
 @connection
 async def sql_get_cards_by_category(
+    telegram_id: int,
     category_id: int,
+    type_card: str,
     session: AsyncSession,
     offset: int = 0
 ) -> Tuple[bool, bool, Sequence]:
     try:
-        cards_result = await session.execute(
-            sa.select(Card.id, Card.name)
-            .where(Card.category_id == category_id)
+        query = sa.select(Card.id, Card.name).where(Card.category_id == category_id)
+
+        if type_card == "f":
+            query = (
+                query
+                .join(UserFavorite, Card.id == UserFavorite.card_id)
+                .join(User, UserFavorite.user_id == User.id)
+                .where(
+                    User.telegram_id == telegram_id,
+                )
         )
+
+        elif type_card == "m":
+            query = (
+                query
+                .join(User, Card.user_id == User.id)
+                .where(
+                    User.telegram_id == telegram_id,
+                )
+            )
+
+        cards_result = await session.execute(query)
         cards = cards_result.all()
 
         return offset > 0, len(cards) > (offset + cfg.LIMIT_VIEW_PAGE), cards[:cfg.LIMIT_VIEW_PAGE]
 
     except SQLAlchemyError as e:
-        cfg.logger.error(f"Database error reading all cards by category_id = {category_id}: {e}")
+        cfg.logger.error(f"Database error reading all cards by category_id = {category_id} and type = {type_card}: {e}")
         raise
 
     except Exception as e:
-        cfg.logger.error(f"Unexpected error reading all cards by category_id = {category_id}: {e}")
+        cfg.logger.error(f"Unexpected error reading all cards by category_id = {category_id} and type = {type_card}: {e}")
         raise
 
 

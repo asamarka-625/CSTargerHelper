@@ -16,10 +16,12 @@ router = Router()
 
 
 # Колбэк получения списка карт
-@router.callback_query(F.data == "maps")
+@router.callback_query(F.data.startswith("maps:"))
 async def get_map_callback_run(callback_query: CallbackQuery):
+    type_card = callback_query.data.replace("maps:", "")
+
     try:
-        text, keyboard = await create_maps_inline()
+        text, keyboard = await create_maps_inline(type_card=type_card)
 
         await edit_message(
             message=callback_query.message,
@@ -40,10 +42,11 @@ async def get_map_callback_run(callback_query: CallbackQuery):
 # Колбэк выбора карты
 @router.callback_query(F.data.startswith("map:"))
 async def choice_map_callback_run(callback_query: CallbackQuery):
-    map_id = int(callback_query.data.replace("map:", ""))
+    type_card, map_id = callback_query.data.replace("map:", "").split(":")
+    map_id = int(map_id)
 
     try:
-        text, keyboard = await create_categories_inline(map_id=map_id)
+        text, keyboard = await create_categories_inline(map_id=map_id, type_card=type_card)
         map_image = await sql_get_map_image(map_id=map_id)
 
         await edit_message(
@@ -66,11 +69,16 @@ async def choice_map_callback_run(callback_query: CallbackQuery):
 # Колбэк выбора категории
 @router.callback_query(F.data.startswith("category:"))
 async def choice_category_callback_run(callback_query: CallbackQuery):
-    map_category_id = callback_query.data.replace("category:", "")
-    map_id, category_id = map(int, map_category_id.split(":"))
+    type_map_category_id = callback_query.data.replace("category:", "").split(":")
+    type_card = type_map_category_id[0]
+    map_id, category_id = map(int, type_map_category_id[1:])
 
     try:
-        text, keyboard = await create_cards_inline(map_id=map_id, category_id=category_id)
+        text, keyboard = await create_cards_inline(
+            map_id=map_id,
+            category_id=category_id,
+            type_card=type_card
+        )
 
         await edit_message(
             message=callback_query.message,
@@ -91,8 +99,9 @@ async def choice_category_callback_run(callback_query: CallbackQuery):
 # Колбэк выбора карточки
 @router.callback_query(F.data.startswith("card:"))
 async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
-    map_category_card_id = callback_query.data.replace("card:", "")
-    map_id, category_id, card_id = map(int, map_category_card_id.split(":"))
+    type_map_category_card_id = callback_query.data.replace("card:", "").split(":")
+    type_card = type_map_category_card_id[0]
+    map_id, category_id, card_id = map(int, type_map_category_card_id[1:])
 
     try:
         card = await sql_get_card_by_id(card_id=card_id)
@@ -124,7 +133,8 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             order=len(card.images),
             user_favorite=int(user_favorite),
             images=card.images,
-            share_link=share_link
+            share_link=share_link,
+            type_card=type_card
         )
 
         await edit_message(
@@ -147,9 +157,10 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
 # Колбэк навигации по карточке
 @router.callback_query(F.data.startswith("image:"))
 async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
-    favorite_map_category_card_image_order_id = callback_query.data.replace("image:", "")
+    type_favorite_map_category_card_image_order_id = callback_query.data.replace("image:", "").split(":")
+    type_card = type_favorite_map_category_card_image_order_id[0]
     favorite, map_id, category_id, card_id, max_image, order = \
-        map(int, favorite_map_category_card_image_order_id.split(":"))
+        map(int, type_favorite_map_category_card_image_order_id[1:])
 
     try:
         if order > max_image:
@@ -173,7 +184,8 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             order=order,
             user_favorite=favorite,
             max_image=max_image,
-            share_link=share_link
+            share_link=share_link,
+            type_card=type_card
         )
 
         caption = "\n".join(caption_split[4:-1])
@@ -205,9 +217,10 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
 # Колбэк добавления/удаления из избранного
 @router.callback_query(F.data.startswith("favorite:"))
 async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
-    favorite_map_category_card_image_order_id = callback_query.data.replace("favorite:", "")
+    type_favorite_map_category_card_image_order_id = callback_query.data.replace("favorite:", "").split(":")
+    type_card = type_favorite_map_category_card_image_order_id[0]
     favorite, map_id, category_id, card_id, max_image, order = \
-        map(int, favorite_map_category_card_image_order_id.split(":"))
+        map(int, type_favorite_map_category_card_image_order_id[1:])
 
     try:
         await sql_update_favorite_card_for_user(
@@ -234,7 +247,8 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             order=order,
             user_favorite=int(not favorite),
             max_image=max_image,
-            share_link=share_link
+            share_link=share_link,
+            type_card=type_card
         )
 
         text = (
