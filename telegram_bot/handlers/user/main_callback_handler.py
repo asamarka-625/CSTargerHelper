@@ -173,7 +173,7 @@ async def search_card(message: Message, state: FSMContext, bot: Bot):
                 f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
                 f"Номер карточки: <b>#{card.card_number}</b>\n"
                 f"Название: <b>{card.name}</b>\n\n"
-                f"Описание: {card.description}\n\n"
+                f"<blockquote>Описание: {card.description}</blockquote>\n\n"
                 f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
             )
 

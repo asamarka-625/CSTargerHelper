@@ -5,7 +5,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.deep_linking import create_start_link
 # Внутренние модули
 from telegram_bot.keyboards import (create_maps_inline, create_categories_inline, create_cards_inline,
-                                        create_card_images_inline)
+                                    create_card_images_inline)
 from telegram_bot.utils import edit_message
 from telegram_bot.crud import (sql_get_card_by_id, sql_get_map_image, sql_chek_favorite_card_for_user,
                                sql_update_favorite_card_for_user)
@@ -123,7 +123,7 @@ async def choice_card_callback_run(callback_query: CallbackQuery, bot: Bot):
             f"- Изображение {len(card.images)}/{len(card.images)}\n\n"
             f"Номер карточки: <b>#{card.card_number}</b>\n"
             f"Название: <b>{card.name}</b>\n\n"
-            f"<blockquote>Описание: {card.description}\n\n</blockquote>"
+            f"<blockquote>Описание: {card.description}</blockquote>\n\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
 
@@ -193,7 +193,7 @@ async def navigation_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text = (
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
-            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
+            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n\n"
             f"<blockquote>{caption}</blockquote>\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
@@ -256,7 +256,7 @@ async def favorite_card_callback_run(callback_query: CallbackQuery, bot: Bot):
         text = (
             f"- Изображение {order}/{max_image}\n\n"
             f"Номер карточки: <b>#{card_number}</b>\n"
-            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n"
+            f"Название: <b>{caption_split[3].replace("Название: ", "").strip()}</b>\n\n"
             f"<blockquote>{caption}</blockquote>\n"
             f"Ссылка на карточку: <a href='{deeplink}'>Ссылка</a>"
         )
