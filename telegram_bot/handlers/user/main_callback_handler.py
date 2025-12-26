@@ -141,7 +141,7 @@ async def search_card_callback_run(callback_query: CallbackQuery, state: FSMCont
 # Поиск карточки
 @router.message(SearchMap.search)
 async def search_card(message: Message, state: FSMContext, bot: Bot):
-    card_number = message.text.replace("#", "").strip()
+    card_number = message.text.replace("#", "").upper().strip()
     card = await sql_get_card_by_number(card_number=card_number)
 
     try:
