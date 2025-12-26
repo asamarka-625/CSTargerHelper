@@ -25,18 +25,29 @@ async def back_callback_run(callback_query: CallbackQuery):
         data["media"] = f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"
 
     elif back == "map":
-        data["text"], data["keyboard"] = await create_maps_inline()
+        type_card = back.replace("map:", "")
+        data["text"], data["keyboard"] = await create_maps_inline(type_card=type_card)
         data["media"] = f"{cfg.IMAGES_DIR}/main/{cfg.MAIN_USER_PHOTO}"
 
     elif back.startswith("category:"):
-        map_id = int(back.replace("category:", ""))
-        data["text"], data["keyboard"] = await create_categories_inline(map_id=map_id)
+        type_card, map_id = back.replace("category:", "").split(":")
+        map_id = int(map_id)
+        data["text"], data["keyboard"] = await create_categories_inline(
+            type_card=type_card,
+            map_id=map_id
+        )
 
     elif back.startswith("cards:"):
-        map_category_id = back.replace("cards:", "")
-        map_id, category_id = map(int, map_category_id.split(":"))
+        type_map_category_id = back.replace("cards:", "").split(":")
+        type_card = type_map_category_id[0]
+        map_id, category_id = map(int, type_map_category_id[1:])
 
-        data["text"], data["keyboard"] = await create_cards_inline(map_id=map_id, category_id=category_id)
+        data["text"], data["keyboard"] = await create_cards_inline(
+            telegram_id=callback_query.from_user.id,
+            map_id=map_id,
+            category_id=category_id,
+            type_card=type_card
+        )
 
         map_image = await sql_get_map_image(map_id=map_id)
         data["media"] = f"{cfg.IMAGES_DIR}/maps/{map_image}"
